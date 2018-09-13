@@ -1,38 +1,38 @@
 export interface LocalCamera {
     id: string;
     name: string;
-    AllowRemoteCameraControl(allow: boolean): Promise<boolean>;
+    AllowRemoteCameraControl(options: { allow: boolean }): Promise<boolean>;
     GetBacklightCompensation(): Promise<boolean>;
     GetFramerateTradeOffProfile(): Promise<any>;
     GetPreviewLabel(): Promise<string>;
     GetResolutionTradeOffProfile(): Promise<any>;
     IsControlDigital(): Promise<boolean>;
     IsSuspended(): Promise<boolean>;
-    SetAspectRatioConstraint(aspectRatioWidth: number, aspectRatioHeight: number): Promise<boolean>;
-    SetBacklightCompensation(backlightCompensation: boolean): Promise<boolean>;
-    SetControlDigital(digital: boolean): Promise<boolean>;
-    SetFramerateTradeOffProfile(profile: string): Promise<boolean>;
-    SetMaxBitRate(bitRate: number): Promise<void>;
-    SetMaxConstraint(width: number, height: number, frameInterval: number): Promise<boolean>;
-    SetNudgeTimes(panTime: number, tiltTime: number, zoomTime: number): Promise<boolean>;
-    SetPreviewLabel(label: string): Promise<boolean>;
-    SetResolutionTradeOffProfile(profile: string): Promise<boolean>;
-    ControlPTZ(pan: number, tilt: number, zoom: number): boolean;
+    SetAspectRatioConstraint(options: { aspectRatioWidth: number, aspectRatioHeight: number }): Promise<boolean>;
+    SetBacklightCompensation(options: { backlightCompensation: boolean }): Promise<boolean>;
+    SetControlDigital(options: { digital: boolean }): Promise<boolean>;
+    SetFramerateTradeOffProfile(options: { profile: string }): Promise<boolean>;
+    SetMaxBitRate(options: { bitRate: number }): Promise<void>;
+    SetMaxConstraint(options: { width: number, height: number, frameInterval: number }): Promise<boolean>;
+    SetNudgeTimes(options: { panTime: number, tiltTime: number, zoomTime: number }): Promise<boolean>;
+    SetPreviewLabel(options: { label: string }): Promise<boolean>;
+    SetResolutionTradeOffProfile(options: { profile: string }): Promise<boolean>;
+    ControlPTZ(options: { pan: number, tilt: number, zoom: number }): boolean;
     GetId(): string;
     GetName(): string;
     GetPosition(): any;
-    ShowCameraControl(show: boolean): boolean;
+    ShowCameraControl(options: { show: boolean }): boolean;
 }
 
 export interface RemoteCamera {
     id: string;
     name: string;
     IsControllable(): boolean;
-    ControlPTZ(pan: number, tilt: number, zoom: number): boolean;
+    ControlPTZ(options: { pan: number, tilt: number, zoom: number }): boolean;
     GetId(): string;
     GetName(): string;
     GetPosition(): any;
-    ShowCameraControl(show: boolean): boolean;
+    ShowCameraControl(options: { show: boolean }): boolean;
 }
 
 export interface Participant {
@@ -50,13 +50,13 @@ export interface Participant {
 export interface LocalMicrophone {
     id: string;
     name: string;
-    PlayTone(dtmfTone: any);
-    SetVolume(volumePercent: any);
+    PlayTone(options: { dtmfTone: any });
+    SetVolume(options: { volumePercent: any });
     ShowDebugDialog();
     GetId(): string;
     GetName(): string;
     GetSignalType(): any;
-    SetSignalType(signalType: string): Promise<boolean>;
+    SetSignalType(options: { signalType: string }): Promise<boolean>;
 }
 
 export interface LocalSpeaker {

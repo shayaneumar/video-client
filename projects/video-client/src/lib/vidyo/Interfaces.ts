@@ -15,103 +15,122 @@ export interface VidyoClientState {
 }
 
 export interface VidyoConnector {
-    AssignViewToCompositeRenderer(viewId: string, viewStyle: ViewStyle, remoteParticipants: number): Promise<boolean>;
-    AssignViewToLocalCamera(viewId: string, localCamera: LocalCamera, displayCropped: boolean, allowZoom: boolean): Promise<boolean>;
-    AssignViewToRemoteCamera(viewId: string, remoteCamera: RemoteCamera, displayCropped: boolean, allowZoom: boolean): Promise<boolean>;
-    AssignViewToRemoteWindowShare(viewId: string, remoteWindowShare: any, displayCropped: boolean, allowZoom: boolean): Promise<boolean>;
-    Connect(host: string, token: string, displayName: string, resourceId: string, onSuccess?: () => void, onFailure?: (reason) => void,
-            onDisconnected?: (reason) => void): Promise<boolean>;
+    AssignViewToCompositeRenderer(options: { viewId: string, viewStyle: ViewStyle, remoteParticipants: number }): Promise<boolean>;
+    AssignViewToLocalCamera(options: { viewId: string, localCamera: LocalCamera, displayCropped: boolean, allowZoom: boolean })
+        : Promise<boolean>;
+    AssignViewToRemoteCamera(options: { viewId: string, remoteCamera: RemoteCamera, displayCropped: boolean, allowZoom: boolean })
+        : Promise<boolean>;
+    AssignViewToRemoteWindowShare(options: { viewId: string, remoteWindowShare: any, displayCropped: boolean, allowZoom: boolean })
+        : Promise<boolean>;
+    Connect(options: {
+        host: string, token: string, displayName: string, resourceId: string, onSuccess?: () => void,
+        onFailure?: (reason) => void, onDisconnected?: (reason) => void
+    }): Promise<boolean>;
     CycleCamera(): Promise<boolean>;
     CycleMicrophone(): Promise<boolean>;
     CycleSpeaker(): Promise<boolean>;
     Disable(): Promise<void>;
     DisableDebug(): Promise<void>;
     Disconnect(): void;
-    EnableDebug(port: number, logFilter: string): Promise<boolean>;
+    EnableDebug(options: { port: number, logFilter: string }): Promise<boolean>;
     GetCpuTradeOffProfile(): Promise<any>;
     GetState(): Promise<any>;
     GetStatsJson(): Promise<string>;
     GetVersion(): Promise<string>;
     GetVersionWithoutBuildNumber(): Promise<string | null>;
-    HideView(viewId: string): Promise<boolean>;
-    RegisterLocalCameraEventListener(onAdded?: (localCamera: LocalCamera) => void, onRemoved?: (localCamera: LocalCamera) => void,
-        onSelected?: (localCamera: LocalCamera) => void, onStateUpdated?: (localCamera: LocalCamera, state) => void): Promise<boolean>;
-    RegisterLocalCameraFrameListener(onFrame, localCamera, width, height, frameInterval): Promise<boolean>;
-    RegisterLocalMicrophoneEventListener(onAdded?: (localWindowShare) => void, onRemoved?: (localWindowShare) => void,
-        onSelected?: (localWindowShare) => void, onStateUpdated?: (localWindowShare) => void): Promise<boolean>;
-    RegisterLocalMicrophoneFrameListener(onFrame, localMicrophone): Promise<boolean>;
-    RegisterLocalMonitorEventListener(onAdded, onRemoved, onSelected, onStateUpdated): Promise<boolean>;
-    RegisterLocalMonitorFrameListener(onFrame, localMonitor, width, height, frameInterval): Promise<boolean>;
-    RegisterLocalWindowShareEventListener(onAdded?: (localWindowShare) => void, onRemoved?: (localWindowShare) => void,
-        onSelected?: (localWindowShare) => void, onStateUpdated?: (localWindowShare) => void): Promise<boolean>;
-    RegisterLocalWindowShareFrameListener(onFrame, localWindowShare, width, height, frameInterval): Promise<boolean>;
-    RegisterLogEventListener(onLog, filter): Promise<boolean>;
-    RegisterMessageEventListener(onChatMessageReceived): Promise<boolean>;
-    RegisterNetworkInterfaceEventListener(onAdded, onRemoved, onSelected, onStateUpdated): Promise<boolean>;
-    RegisterLocalSpeakerEventListener(onAdded?: (device) => void, onRemoved?: (device) => void, onSelected?: (device) => void,
-        onStateUpdated?: (device) => void): Promise<boolean>;
-    RegisterParticipantEventListener(onJoined?: (participant) => void, onLeft?: (participant) => void,
-        onDynamicChanged?: (participants, remoteCameras) => void, onLoudestChanged?: (participant, audioOnly) => void): Promise<boolean>;
-    RegisterRecorderInCallEventListener(onRecorderInCallChanged): Promise<boolean>;
-    RegisterRemoteCameraEventListener(onAdded?: (remoteCamera: RemoteCamera, participant: Participant) => void,
-            onRemoved?: (remoteCamera: RemoteCamera, participant: Participant) => void, onStateUpdated?: (remoteCamera: RemoteCamera,
-            participant: Participant, state: any) => void): Promise<boolean>;
-    RegisterRemoteCameraFrameListener(onFrame, remoteCamera, width, height, frameInterval): Promise<boolean>;
-    RegisterRemoteMicrophoneEventListener(onAdded, onRemoved, onStateUpdated): Promise<boolean>;
-    RegisterRemoteWindowShareEventListener(onAdded, onRemoved, onStateUpdated): Promise<boolean>;
-    RegisterRemoteWindowShareFrameListener(onFrame, remoteWindowShare, width, height, frameInterval): Promise<boolean>;
-    RegisterResourceManagerEventListener(onAvailableResourcesChanged, onMaxRemoteSourcesChanged): Promise<boolean>;
-    RegisterWebProxyEventListener(onWebProxyCredentialsRequest): Promise<boolean>;
-    SelectAudioContentShare(localMicrophone): Promise<boolean>;
+    HideView(options: { viewId: string }): Promise<boolean>;
+    RegisterLocalCameraEventListener(options: {
+        onAdded?: (localCamera: LocalCamera) => void,
+        onRemoved?: (localCamera: LocalCamera) => void, onSelected?: (localCamera: LocalCamera) => void,
+        onStateUpdated?: (localCamera: LocalCamera, state) => void
+    }): Promise<boolean>;
+    RegisterLocalCameraFrameListener(options: { onFrame, localCamera, width, height, frameInterval }): Promise<boolean>;
+    RegisterLocalMicrophoneEventListener(options: {
+        onAdded?: (localWindowShare) => void, onRemoved?: (localWindowShare) => void,
+        onSelected?: (localWindowShare) => void, onStateUpdated?: (localWindowShare) => void
+    }): Promise<boolean>;
+    RegisterLocalMicrophoneFrameListener(options: { onFrame, localMicrophone }): Promise<boolean>;
+    RegisterLocalMonitorEventListener(options: { onAdded, onRemoved, onSelected, onStateUpdated }): Promise<boolean>;
+    RegisterLocalMonitorFrameListener(options: { onFrame, localMonitor, width, height, frameInterval }): Promise<boolean>;
+    RegisterLocalWindowShareEventListener(options: {
+        onAdded?: (localWindowShare) => void, onRemoved?: (localWindowShare) => void,
+        onSelected?: (localWindowShare) => void, onStateUpdated?: (localWindowShare) => void
+    }): Promise<boolean>;
+    RegisterLocalWindowShareFrameListener(options: { onFrame, localWindowShare, width, height, frameInterval }): Promise<boolean>;
+    RegisterLogEventListener(options: { onLog, filter }): Promise<boolean>;
+    RegisterMessageEventListener(options: { onChatMessageReceived }): Promise<boolean>;
+    RegisterNetworkInterfaceEventListener(options: { onAdded, onRemoved, onSelected, onStateUpdated }): Promise<boolean>;
+    RegisterLocalSpeakerEventListener(options: {
+        onAdded?: (device) => void, onRemoved?: (device) => void, onSelected?: (device) => void,
+        onStateUpdated?: (device) => void
+    }): Promise<boolean>;
+    RegisterParticipantEventListener(options: {
+        onJoined?: (participant) => void, onLeft?: (participant) => void,
+        onDynamicChanged?: (participants, remoteCameras) => void, onLoudestChanged?: (participant, audioOnly) => void
+    }): Promise<boolean>;
+    RegisterRecorderInCallEventListener(options: { onRecorderInCallChanged }): Promise<boolean>;
+    RegisterRemoteCameraEventListener(options: {
+        onAdded?: (remoteCamera: RemoteCamera, participant: Participant) => void,
+        onRemoved?: (remoteCamera: RemoteCamera, participant: Participant) => void, onStateUpdated?: (remoteCamera: RemoteCamera,
+            participant: Participant, state: any) => void
+    }): Promise<boolean>;
+    RegisterRemoteCameraFrameListener(options: { onFrame, remoteCamera, width, height, frameInterval }): Promise<boolean>;
+    RegisterRemoteMicrophoneEventListener(options: { onAdded, onRemoved, onStateUpdated }): Promise<boolean>;
+    RegisterRemoteWindowShareEventListener(options: { onAdded, onRemoved, onStateUpdated }): Promise<boolean>;
+    RegisterRemoteWindowShareFrameListener(options: { onFrame, remoteWindowShare, width, height, frameInterval }): Promise<boolean>;
+    RegisterResourceManagerEventListener(options: { onAvailableResourcesChanged, onMaxRemoteSourcesChanged }): Promise<boolean>;
+    RegisterWebProxyEventListener(options: { onWebProxyCredentialsRequest }): Promise<boolean>;
+    SelectAudioContentShare(options: { localMicrophone }): Promise<boolean>;
     SelectDefaultCamera(): Promise<boolean>;
     SelectDefaultMicrophone(): Promise<boolean>;
     SelectDefaultNetworkInterfaceForMedia(): Promise<boolean>;
     SelectDefaultNetworkInterfaceForSignaling(): Promise<boolean>;
     SelectDefaultSpeaker(): Promise<boolean>;
-    SelectLocalCamera(localCamera: any): Promise<boolean>;
-    SelectLocalMicrophone(localMicrophone: any): Promise<boolean>;
-    SelectLocalMonitor(localMonitor): Promise<boolean>;
-    SelectLocalSpeaker(localSpeaker: any): Promise<boolean>;
-    SelectLocalWindowShare(localWindowShare: any): Promise<boolean>;
-    SelectNetworkInterfaceForMedia(networkInterface): Promise<boolean>;
-    SelectNetworkInterfaceForSignaling(networkInterface): Promise<boolean>;
-    SelectVideoContentShare(localCamera): Promise<boolean>;
-    SendChatMessage(message: string): Promise<boolean>;
-    SetAdvancedOptions(options): Promise<boolean>;
-    SetCameraPrivacy(privacy: boolean): Promise<boolean>;
-    SetCertificateAuthorityList(certificateAuthorityList): Promise<boolean>;
-    SetCpuTradeOffProfile(profile): Promise<boolean>;
-    SetLocation(latitude, longitude): Promise<boolean>;
-    SetMicrophonePrivacy(privacy: boolean): Promise<boolean>;
-    SetMode(mode): Promise<boolean>;
-    SetSpeakerPrivacy(privacy: boolean): Promise<boolean>;
-    SetViewAnimationSpeed(viewId, speedPercentage): Promise<boolean>;
-    SetViewBackgroundColor(viewId, red, green, blue): Promise<boolean>;
-    SetWebProxyAddressCredentials(proxyAddress, username, password): Promise<boolean>;
-    ShowAudioMeters(viewId: string, showMeters: boolean): Promise<boolean>;
-    ShowPreview(preview): Promise<boolean>;
-    ShowViewAt(elementId: string, offsetLeft: number, offsetTop: number, offsetWidth: number, offsetHeight: number): Promise<boolean>;
-    ShowViewLabel(viewId: string, showLabel: boolean): Promise<boolean>;
+    SelectLocalCamera(options: { localCamera: any }): Promise<boolean>;
+    SelectLocalMicrophone(options: { localMicrophone: any }): Promise<boolean>;
+    SelectLocalMonitor(options: { localMonitor }): Promise<boolean>;
+    SelectLocalSpeaker(options: { localSpeaker: any }): Promise<boolean>;
+    SelectLocalWindowShare(options: { localWindowShare: any }): Promise<boolean>;
+    SelectNetworkInterfaceForMedia(options: { networkInterface }): Promise<boolean>;
+    SelectNetworkInterfaceForSignaling(options: { networkInterface }): Promise<boolean>;
+    SelectVideoContentShare(options: { localCamera }): Promise<boolean>;
+    SendChatMessage(options: { message: string }): Promise<boolean>;
+    SetAdvancedOptions(options: { options }): Promise<boolean>;
+    SetCameraPrivacy(options: { privacy: boolean }): Promise<boolean>;
+    SetCertificateAuthorityList(options: { certificateAuthorityList }): Promise<boolean>;
+    SetCpuTradeOffProfile(options: { profile }): Promise<boolean>;
+    SetLocation(options: { latitude, longitude }): Promise<boolean>;
+    SetMicrophonePrivacy(options: { privacy: boolean }): Promise<boolean>;
+    SetMode(options: { mode }): Promise<boolean>;
+    SetSpeakerPrivacy(options: { privacy: boolean }): Promise<boolean>;
+    SetViewAnimationSpeed(options: { viewId, speedPercentage }): Promise<boolean>;
+    SetViewBackgroundColor(options: { viewId, red, green, blue }): Promise<boolean>;
+    SetWebProxyAddressCredentials(options: { proxyAddress, username, password }): Promise<boolean>;
+    ShowAudioMeters(options: { viewId: string, showMeters: boolean }): Promise<boolean>;
+    ShowPreview(options: { preview }): Promise<boolean>;
+    ShowViewAt(options: { elementId: string, offsetLeft: number, offsetTop: number, offsetWidth: number, offsetHeight: number })
+        : Promise<boolean>;
+    ShowViewLabel(options: { viewId: string, showLabel: boolean }): Promise<boolean>;
     UnregisterLocalCameraEventListener(): Promise<boolean>;
-    UnregisterLocalCameraFrameListener(localCamera): Promise<boolean>;
+    UnregisterLocalCameraFrameListener(options: { localCamera }): Promise<boolean>;
     UnregisterLocalMicrophoneEventListener(): Promise<boolean>;
-    UnregisterLocalMicrophoneFrameListener(localMicrophone): Promise<boolean>;
+    UnregisterLocalMicrophoneFrameListener(options: { localMicrophone }): Promise<boolean>;
     UnregisterLocalMonitorEventListener(): Promise<boolean>;
-    UnregisterLocalMonitorFrameListener(localMonitor): Promise<boolean>;
+    UnregisterLocalMonitorFrameListener(options: { localMonitor }): Promise<boolean>;
     UnregisterLocalSpeakerEventListener(): Promise<boolean>;
     UnregisterLocalWindowShareEventListener(): Promise<boolean>;
-    UnregisterLocalWindowShareFrameListener(localWindowShare): Promise<boolean>;
+    UnregisterLocalWindowShareFrameListener(options: { localWindowShare }): Promise<boolean>;
     UnregisterLogEventListener(): Promise<boolean>;
     UnregisterMessageEventListener(): Promise<boolean>;
     UnregisterNetworkInterfaceEventListener(): Promise<boolean>;
     UnregisterParticipantEventListener(): Promise<boolean>;
     UnregisterRecorderInCallEventListener(): Promise<boolean>;
     UnregisterRemoteCameraEventListener(): Promise<boolean>;
-    UnregisterRemoteCameraFrameListener(remoteCamera): Promise<boolean>;
+    UnregisterRemoteCameraFrameListener(options: { remoteCamera }): Promise<boolean>;
     UnregisterRemoteMicrophoneEventListener(): Promise<boolean>;
-    UnregisterRemoteMicrophoneFrameListener(remoteMicrophone): Promise<boolean>;
+    UnregisterRemoteMicrophoneFrameListener(options: { remoteMicrophone }): Promise<boolean>;
     UnregisterRemoteWindowShareEventListener(): Promise<boolean>;
-    UnregisterRemoteWindowShareFrameListener(remoteWindowShare): Promise<boolean>;
+    UnregisterRemoteWindowShareFrameListener(options: { remoteWindowShare }): Promise<boolean>;
     UnregisterResourceManagerEventListener(): Promise<boolean>;
     UnregisterWebProxyEventListener(): Promise<boolean>;
 }
@@ -130,38 +149,38 @@ export interface VidyoClientInterface {
 export interface LocalCamera {
     id: string;
     name: string;
-    AllowRemoteCameraControl(allow: boolean): Promise<boolean>;
+    AllowRemoteCameraControl(options: { allow: boolean }): Promise<boolean>;
     GetBacklightCompensation(): Promise<boolean>;
     GetFramerateTradeOffProfile(): Promise<any>;
     GetPreviewLabel(): Promise<string>;
     GetResolutionTradeOffProfile(): Promise<any>;
     IsControlDigital(): Promise<boolean>;
     IsSuspended(): Promise<boolean>;
-    SetAspectRatioConstraint(aspectRatioWidth: number, aspectRatioHeight: number): Promise<boolean>;
-    SetBacklightCompensation(backlightCompensation: boolean): Promise<boolean>;
-    SetControlDigital(digital: boolean): Promise<boolean>;
-    SetFramerateTradeOffProfile(profile: string): Promise<boolean>;
-    SetMaxBitRate(bitRate: number): Promise<void>;
-    SetMaxConstraint(width: number, height: number, frameInterval: number): Promise<boolean>;
-    SetNudgeTimes(panTime: number, tiltTime: number, zoomTime: number): Promise<boolean>;
-    SetPreviewLabel(label: string): Promise<boolean>;
-    SetResolutionTradeOffProfile(profile: string): Promise<boolean>;
-    ControlPTZ(pan: number, tilt: number, zoom: number): boolean;
+    SetAspectRatioConstraint(options: { aspectRatioWidth: number, aspectRatioHeight: number }): Promise<boolean>;
+    SetBacklightCompensation(options: { backlightCompensation: boolean }): Promise<boolean>;
+    SetControlDigital(options: { digital: boolean }): Promise<boolean>;
+    SetFramerateTradeOffProfile(options: { profile: string }): Promise<boolean>;
+    SetMaxBitRate(options: { bitRate: number }): Promise<void>;
+    SetMaxConstraint(options: { width: number, height: number, frameInterval: number }): Promise<boolean>;
+    SetNudgeTimes(options: { panTime: number, tiltTime: number, zoomTime: number }): Promise<boolean>;
+    SetPreviewLabel(options: { label: string }): Promise<boolean>;
+    SetResolutionTradeOffProfile(options: { profile: string }): Promise<boolean>;
+    ControlPTZ(options: { pan: number, tilt: number, zoom: number }): boolean;
     GetId(): string;
     GetName(): string;
     GetPosition(): any;
-    ShowCameraControl(show: boolean): boolean;
+    ShowCameraControl(options: { show: boolean }): boolean;
 }
 
 export interface RemoteCamera {
     id: string;
     name: string;
     IsControllable(): boolean;
-    ControlPTZ(pan: number, tilt: number, zoom: number): boolean;
+    ControlPTZ(options: { pan: number, tilt: number, zoom: number }): boolean;
     GetId(): string;
     GetName(): string;
     GetPosition(): any;
-    ShowCameraControl(show: boolean): boolean;
+    ShowCameraControl(options: { show: boolean }): boolean;
 }
 
 export interface Participant {
@@ -179,13 +198,13 @@ export interface Participant {
 export interface LocalMicrophone {
     id: string;
     name: string;
-    PlayTone(dtmfTone: any);
-    SetVolume(volumePercent: any);
+    PlayTone(options: { dtmfTone: any });
+    SetVolume(options: { volumePercent: any });
     ShowDebugDialog();
     GetId(): string;
     GetName(): string;
     GetSignalType(): any;
-    SetSignalType(signalType: string): Promise<boolean>;
+    SetSignalType(options: { signalType: string }): Promise<boolean>;
 }
 
 export interface LocalSpeaker {
