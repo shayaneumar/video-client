@@ -50,7 +50,6 @@ export class VideoClientService {
         console.log('videoClient.disconnect()');
         if (this._vidyoConnector) {
             this._vidyoConnector.Disconnect();
-            this._vidyoConnector = undefined;
         }
     }
 
@@ -81,16 +80,16 @@ export class VideoClientService {
         return this._windowShareSubject as Observable<WindowShareEvent>;
     }
 
-    public selectCamera(camera: any): Promise<boolean> {
-        return this._vidyoConnector.SelectLocalCamera({ localCamera: camera });
+    public selectCamera(options: { camera: any }): Promise<boolean> {
+        return this._vidyoConnector.SelectLocalCamera({ localCamera: options.camera });
     }
 
-    public selectSpeaker(speaker: any): Promise<boolean> {
-        return this._vidyoConnector.SelectLocalSpeaker({ localSpeaker: speaker });
+    public selectSpeaker(options: { speaker: any }): Promise<boolean> {
+        return this._vidyoConnector.SelectLocalSpeaker({ localSpeaker: options.speaker });
     }
 
-    public selectMicrophone(microphone: any): Promise<boolean> {
-        return this._vidyoConnector.SelectLocalMicrophone({ localMicrophone: microphone });
+    public selectMicrophone(options: { microphone: any }): Promise<boolean> {
+        return this._vidyoConnector.SelectLocalMicrophone({ localMicrophone: options.microphone });
     }
 
     public cycleCamera(): Promise<boolean> {
@@ -101,22 +100,36 @@ export class VideoClientService {
         return this._joinSubject as Observable<boolean>;
     }
 
-    public assignViewToLocalCamera(viewId: string, localCamera: LocalCamera, displayCropped: boolean,
-        allowZoom: boolean): Promise<boolean> {
-        return this._vidyoConnector.AssignViewToLocalCamera({ viewId, localCamera, displayCropped, allowZoom });
+    public assignViewToLocalCamera(options: {
+        viewId: string, localCamera: LocalCamera, displayCropped: boolean,
+        allowZoom: boolean
+    }): Promise<boolean> {
+        return this._vidyoConnector.AssignViewToLocalCamera({
+            viewId: options.viewId, localCamera: options.localCamera,
+            displayCropped: options.displayCropped, allowZoom: options.allowZoom
+        });
     }
 
-    public assignViewToRemoteCamera(viewId: string, remoteCamera: RemoteCamera, displayCropped: boolean,
-        allowZoom: boolean): Promise<boolean> {
-        return this._vidyoConnector.AssignViewToRemoteCamera({ viewId, remoteCamera, displayCropped, allowZoom });
+    public assignViewToRemoteCamera(options: {
+        viewId: string, remoteCamera: RemoteCamera, displayCropped: boolean,
+        allowZoom: boolean
+    }): Promise<boolean> {
+        return this._vidyoConnector.AssignViewToRemoteCamera({
+            viewId: options.viewId, remoteCamera: options.remoteCamera,
+            displayCropped: options.displayCropped, allowZoom: options.allowZoom
+        });
     }
 
-    public assignViewToCompositeRenderer(viewId: string, viewStyle: Vidyo.ViewStyle, remoteParticipants: number): Promise<boolean> {
-        return this._vidyoConnector.AssignViewToCompositeRenderer({ viewId, viewStyle, remoteParticipants });
+    public assignViewToCompositeRenderer(options: { viewId: string, viewStyle: Vidyo.ViewStyle, remoteParticipants: number })
+        : Promise<boolean> {
+        return this._vidyoConnector.AssignViewToCompositeRenderer({
+            viewId: options.viewId,
+            viewStyle: options.viewStyle, remoteParticipants: options.remoteParticipants
+        });
     }
 
-    public hideView(viewId: string): Promise<boolean> {
-        return this._vidyoConnector.HideView({ viewId });
+    public hideView(options: { viewId: string }): Promise<boolean> {
+        return this._vidyoConnector.HideView({ viewId: options.viewId });
     }
 
     public join(options: { viewId: string, token: string, displayName: string, resourceId: string }): Promise<boolean> {
@@ -208,16 +221,20 @@ export class VideoClientService {
                     this._vidyoConnector = vc;
 
                     console.log('video.createVidyoConnector().registerDeviceEvents');
-                    this.registerParticipantEvents();
-                    this.registerLocalCameraEvents();
-                    this.registerLocalMicrophoneEvents();
-                    this.registerLocalSpeakerEvents();
-                    this.registerRemoteCameraEvents();
+                    this.registerDeviceEvents();
 
                     console.log('video.createVidyoConnector(): Ready', vc);
                     return vc;
                 });
         }
+    }
+
+    public registerDeviceEvents() {
+        this.registerParticipantEvents();
+        this.registerLocalCameraEvents();
+        this.registerLocalMicrophoneEvents();
+        this.registerLocalSpeakerEvents();
+        this.registerRemoteCameraEvents();
     }
 
     private registerRemoteCameraEvents() {
@@ -315,10 +332,10 @@ export class VideoClientService {
         this._vidyoConnector.RegisterLocalSpeakerEventListener(
             {
                 onAdded: (localSpeaker) => {
-                        console.log('video:RegisterLocalSpeakerEventListener.onAdded', localSpeaker);
-                        const speakerEvent: SpeakerEvent = { type: 'added', speaker: localSpeaker };
-                        this._speakerSubject.next(speakerEvent);
-                    },
+                    console.log('video:RegisterLocalSpeakerEventListener.onAdded', localSpeaker);
+                    const speakerEvent: SpeakerEvent = { type: 'added', speaker: localSpeaker };
+                    this._speakerSubject.next(speakerEvent);
+                },
                 onRemoved: (localSpeaker) => {
                     console.log('video:RegisterLocalSpeakerEventListener.onRemoved', localSpeaker);
                     const speakerEvent: SpeakerEvent = { type: 'removed', speaker: localSpeaker };
