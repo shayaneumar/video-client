@@ -50,6 +50,7 @@ export class VideoClientService {
         console.log('videoClient.disconnect()');
         if (this._vidyoConnector) {
             this._vidyoConnector.Disconnect();
+            this._vidyoConnector = undefined;
         }
     }
 
@@ -235,6 +236,14 @@ export class VideoClientService {
         this.registerLocalMicrophoneEvents();
         this.registerLocalSpeakerEvents();
         this.registerRemoteCameraEvents();
+    }
+
+    public unregisterDeviceEvents() {
+        this._vidyoConnector.UnregisterParticipantEventListener();
+        this._vidyoConnector.UnregisterLocalCameraEventListener();
+        this._vidyoConnector.UnregisterLocalMicrophoneEventListener();
+        this._vidyoConnector.UnregisterLocalSpeakerEventListener();
+        this._vidyoConnector.UnregisterRemoteCameraEventListener();
     }
 
     private registerRemoteCameraEvents() {
