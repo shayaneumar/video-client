@@ -91,9 +91,16 @@ export interface SpeakerEvent {
 
 export type SpeakerEventType = 'added' | 'removed' | 'selected' | 'statechanged';
 
+export interface WindowShare {
+    id: string;
+    name: string;
+    GetId(): string;
+    GetName(): string;
+}
+
 export interface WindowShareEvent {
     type: WindowShareEventType;
-    windowShare: any;
+    windowShare: WindowShare;
 }
 
 export type WindowShareEventType = 'added' | 'removed' | 'selected' | 'statechanged';
