@@ -16,9 +16,9 @@ export interface VidyoClientState {
 
 export interface VidyoConnector {
     AssignViewToCompositeRenderer(options: { viewId: string, viewStyle: ViewStyle, remoteParticipants: number }): Promise<boolean>;
-    AssignViewToLocalCamera(options: { viewId: string, localCamera: LocalCamera, displayCropped: boolean, allowZoom: boolean })
+    AssignViewToLocalCamera(options: { viewId: string, localCamera: VidyoLocalCamera, displayCropped: boolean, allowZoom: boolean })
         : Promise<boolean>;
-    AssignViewToRemoteCamera(options: { viewId: string, remoteCamera: RemoteCamera, displayCropped: boolean, allowZoom: boolean })
+    AssignViewToRemoteCamera(options: { viewId: string, remoteCamera: VidyoRemoteCamera, displayCropped: boolean, allowZoom: boolean })
         : Promise<boolean>;
     AssignViewToRemoteWindowShare(options: { viewId: string, remoteWindowShare: any, displayCropped: boolean, allowZoom: boolean })
         : Promise<boolean>;
@@ -40,9 +40,9 @@ export interface VidyoConnector {
     GetVersionWithoutBuildNumber(): Promise<string | null>;
     HideView(options: { viewId: string }): Promise<boolean>;
     RegisterLocalCameraEventListener(options: {
-        onAdded?: (localCamera: LocalCamera) => void,
-        onRemoved?: (localCamera: LocalCamera) => void, onSelected?: (localCamera: LocalCamera) => void,
-        onStateUpdated?: (localCamera: LocalCamera, state) => void
+        onAdded?: (localCamera: VidyoLocalCamera) => void,
+        onRemoved?: (localCamera: VidyoLocalCamera) => void, onSelected?: (localCamera: VidyoLocalCamera) => void,
+        onStateUpdated?: (localCamera: VidyoLocalCamera, state) => void
     }): Promise<boolean>;
     RegisterLocalCameraFrameListener(options: { onFrame, localCamera, width, height, frameInterval }): Promise<boolean>;
     RegisterLocalMicrophoneEventListener(options: {
@@ -70,9 +70,9 @@ export interface VidyoConnector {
     }): Promise<boolean>;
     RegisterRecorderInCallEventListener(options: { onRecorderInCallChanged }): Promise<boolean>;
     RegisterRemoteCameraEventListener(options: {
-        onAdded?: (remoteCamera: RemoteCamera, participant: Participant) => void,
-        onRemoved?: (remoteCamera: RemoteCamera, participant: Participant) => void, onStateUpdated?: (remoteCamera: RemoteCamera,
-            participant: Participant, state: any) => void
+        onAdded?: (remoteCamera: VidyoRemoteCamera, participant: VidyoParticipant) => void,
+        onRemoved?: (remoteCamera: VidyoRemoteCamera, participant: VidyoParticipant) => void,
+        onStateUpdated?: (remoteCamera: VidyoRemoteCamera, participant: VidyoParticipant, state: any) => void
     }): Promise<boolean>;
     RegisterRemoteCameraFrameListener(options: { onFrame, remoteCamera, width, height, frameInterval }): Promise<boolean>;
     RegisterRemoteMicrophoneEventListener(options: { onAdded, onRemoved, onStateUpdated }): Promise<boolean>;
@@ -146,7 +146,7 @@ export interface VidyoClientInterface {
     }): Promise<VidyoConnector | any>;
 }
 
-export interface LocalCamera {
+export interface VidyoLocalCamera {
     id: string;
     name: string;
     AllowRemoteCameraControl(options: { allow: boolean }): Promise<boolean>;
@@ -172,7 +172,7 @@ export interface LocalCamera {
     ShowCameraControl(options: { show: boolean }): boolean;
 }
 
-export interface RemoteCamera {
+export interface VidyoRemoteCamera {
     id: string;
     name: string;
     IsControllable(): boolean;
@@ -183,7 +183,7 @@ export interface RemoteCamera {
     ShowCameraControl(options: { show: boolean }): boolean;
 }
 
-export interface Participant {
+export interface VidyoParticipant {
     id: string;
     name: string;
     userId: string;
@@ -195,7 +195,7 @@ export interface Participant {
     IsSelectable(): boolean;
 }
 
-export interface LocalMicrophone {
+export interface VidyoLocalMicrophone {
     id: string;
     name: string;
     PlayTone(options: { dtmfTone: any });
@@ -207,7 +207,7 @@ export interface LocalMicrophone {
     SetSignalType(options: { signalType: string }): Promise<boolean>;
 }
 
-export interface LocalSpeaker {
+export interface VidyoLocalSpeaker {
     id: string;
     name: string;
     GetId(): string;

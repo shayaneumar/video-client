@@ -1,4 +1,4 @@
-export interface LocalCamera {
+export interface VidyoLocalCamera {
     id: string;
     name: string;
     AllowRemoteCameraControl(options: { allow: boolean }): Promise<boolean>;
@@ -24,7 +24,7 @@ export interface LocalCamera {
     ShowCameraControl(options: { show: boolean }): boolean;
 }
 
-export interface RemoteCamera {
+export interface VidyoRemoteCamera {
     id: string;
     name: string;
     IsControllable(): boolean;
@@ -35,7 +35,7 @@ export interface RemoteCamera {
     ShowCameraControl(options: { show: boolean }): boolean;
 }
 
-export interface Participant {
+export interface VidyoParticipant {
     id: string;
     name: string;
     userId: string;
@@ -47,7 +47,7 @@ export interface Participant {
     IsSelectable(): boolean;
 }
 
-export interface LocalMicrophone {
+export interface VidyoLocalMicrophone {
     id: string;
     name: string;
     PlayTone(options: { dtmfTone: any });
@@ -59,7 +59,7 @@ export interface LocalMicrophone {
     SetSignalType(options: { signalType: string }): Promise<boolean>;
 }
 
-export interface LocalSpeaker {
+export interface VidyoLocalSpeaker {
     id: string;
     name: string;
     GetId(): string;
@@ -68,10 +68,10 @@ export interface LocalSpeaker {
 
 export interface CameraEvent {
     eventType: CameraEventType;
-    camera: LocalCamera | RemoteCamera;
+    camera: VidyoLocalCamera | VidyoRemoteCamera;
     cameraType: CameraType;
     state?: any;
-    participant?: Participant;
+    participant?: VidyoParticipant;
 }
 
 export type CameraEventType = 'added' | 'removed' | 'selected' | 'statechanged';
@@ -79,19 +79,19 @@ export type CameraType = 'local' | 'remote';
 
 export interface MicrophoneEvent {
     type: MicrophoneEventType;
-    microphone: LocalMicrophone;
+    microphone: VidyoLocalMicrophone;
 }
 
 export type MicrophoneEventType = 'added' | 'removed' | 'selected' | 'statechanged';
 
 export interface SpeakerEvent {
     type: SpeakerEventType;
-    speaker: LocalSpeaker;
+    speaker: VidyoLocalSpeaker;
 }
 
 export type SpeakerEventType = 'added' | 'removed' | 'selected' | 'statechanged';
 
-export interface LocalWindowShare {
+export interface VidyoLocalWindowShare {
     id: string;
     name: string;
     GetId(): string;
@@ -100,7 +100,7 @@ export interface LocalWindowShare {
 
 export interface WindowShareEvent {
     type: WindowShareEventType;
-    windowShare: LocalWindowShare;
+    windowShare: VidyoLocalWindowShare;
 }
 
 export type WindowShareEventType = 'added' | 'removed' | 'selected' | 'statechanged';
@@ -109,8 +109,8 @@ export type ParticipantEventType = 'joined' | 'left' | 'dynamicchanged' | 'loude
 
 export interface ParticipantEvent {
     type: ParticipantEventType;
-    participant: Participant;
+    participant: VidyoParticipant;
     audioOnly?: boolean;
-    dynamicParticipants?: Participant[];
-    dynamicRemoteCameras?: RemoteCamera[];
+    dynamicParticipants?: VidyoParticipant[];
+    dynamicRemoteCameras?: VidyoRemoteCamera[];
 }

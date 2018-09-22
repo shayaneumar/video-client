@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { LocalCamera, RemoteCamera, CameraEvent, ParticipantEvent, MicrophoneEvent, SpeakerEvent, WindowShareEvent } from './interfaces';
+import { VidyoLocalCamera, VidyoRemoteCamera, CameraEvent, ParticipantEvent,
+        MicrophoneEvent, SpeakerEvent, WindowShareEvent } from './interfaces';
 import * as Vidyo from './vidyo';
 import { Observable, Subject } from 'rxjs';
 
@@ -102,7 +103,7 @@ export class VideoClientService {
     }
 
     public assignViewToLocalCamera(options: {
-        viewId: string, localCamera: LocalCamera, displayCropped: boolean,
+        viewId: string, localCamera: VidyoLocalCamera, displayCropped: boolean,
         allowZoom: boolean
     }): Promise<boolean> {
         return this._vidyoConnector.AssignViewToLocalCamera({
@@ -112,7 +113,7 @@ export class VideoClientService {
     }
 
     public assignViewToRemoteCamera(options: {
-        viewId: string, remoteCamera: RemoteCamera, displayCropped: boolean,
+        viewId: string, remoteCamera: VidyoRemoteCamera, displayCropped: boolean,
         allowZoom: boolean
     }): Promise<boolean> {
         return this._vidyoConnector.AssignViewToRemoteCamera({
@@ -249,7 +250,7 @@ export class VideoClientService {
     private registerRemoteCameraEvents() {
         this._vidyoConnector.RegisterRemoteCameraEventListener(
             {
-                onAdded: (remoteCamera: Vidyo.RemoteCamera, participant: any) => {
+                onAdded: (remoteCamera: Vidyo.VidyoRemoteCamera, participant: any) => {
                     console.log('video:registerRemoteCameraEvents.onAdded', remoteCamera);
                     const cameraEvent: CameraEvent = {
                         eventType: 'added', camera: remoteCamera, cameraType: 'remote',
@@ -257,7 +258,7 @@ export class VideoClientService {
                     };
                     this._cameraSubject.next(cameraEvent);
                 },
-                onRemoved: (remoteCamera: Vidyo.RemoteCamera, participant: any) => {
+                onRemoved: (remoteCamera: Vidyo.VidyoRemoteCamera, participant: any) => {
                     console.log('video:registerRemoteCameraEvents.onRemoved', remoteCamera);
                     const cameraEvent: CameraEvent = {
                         eventType: 'removed', camera: remoteCamera, cameraType: 'remote',
@@ -265,7 +266,7 @@ export class VideoClientService {
                     };
                     this._cameraSubject.next(cameraEvent);
                 },
-                onStateUpdated: (remoteCamera: Vidyo.RemoteCamera, participant: any, state: any) => {
+                onStateUpdated: (remoteCamera: Vidyo.VidyoRemoteCamera, participant: any, state: any) => {
                     console.log('video:registerRemoteCameraEvents.onStateUpdated', remoteCamera);
                     const cameraEvent: CameraEvent = {
                         eventType: 'statechanged', camera: remoteCamera,
@@ -280,24 +281,25 @@ export class VideoClientService {
     private registerLocalCameraEvents() {
         this._vidyoConnector.RegisterLocalCameraEventListener(
             {
-                onAdded: (localCamera: Vidyo.LocalCamera) => {
+                onAdded: (localCamera: Vidyo.VidyoLocalCamera) => {
                     console.log('video:registerLocalCameraEvents.onAdded', localCamera);
                     const cameraEvent: CameraEvent = { eventType: 'added', camera: localCamera, cameraType: 'local' };
                     this._cameraSubject.next(cameraEvent);
                 },
-                onRemoved: (localCamera: Vidyo.LocalCamera) => {
+                onRemoved: (localCamera: Vidyo.VidyoLocalCamera) => {
                     console.log('video:registerLocalCameraEvents.onRemoved', localCamera);
                     const cameraEvent: CameraEvent = { eventType: 'removed', camera: localCamera, cameraType: 'local' };
                     this._cameraSubject.next(cameraEvent);
                 },
-                onSelected: (localCamera: Vidyo.LocalCamera) => {
+                onSelected: (localCamera: Vidyo.VidyoLocalCamera) => {
                     console.log('video:registerLocalCameraEvents.onSelected', localCamera);
                     const cameraEvent: CameraEvent = { eventType: 'selected', camera: localCamera, cameraType: 'local' };
                     this._cameraSubject.next(cameraEvent);
                 },
-                onStateUpdated: (localCamera: Vidyo.LocalCamera, state: any) => {
+                onStateUpdated: (localCamera: Vidyo.VidyoLocalCamera, state: any) => {
                     console.log('video:registerLocalCameraEvents.onStateUpdated', localCamera, state);
-                    const cameraEvent: CameraEvent = { eventType: 'statechanged', camera: localCamera, state: state, cameraType: 'local' };
+                    const cameraEvent: CameraEvent = { eventType: 'statechanged', camera: localCamera,
+                                                            state: state, cameraType: 'local' };
                     this._cameraSubject.next(cameraEvent);
                 }
             }
@@ -390,7 +392,8 @@ export class VideoClientService {
                 },
                 onLoudestChanged: (participant, audioOnly) => {
                     console.log('video:registerParticipantEvents.onLoudestChanged', participant, audioOnly);
-                    const participantEvent: ParticipantEvent = { type: 'loudestchanged', participant: participant, audioOnly: audioOnly };
+                    const participantEvent: ParticipantEvent = { type: 'loudestchanged', participant: participant,
+                                                                      audioOnly: audioOnly };
                     this._participantSubject.next(participantEvent);
                 }
             }
