@@ -1,6 +1,5 @@
 import { VidyoClientState, VidyoConnector, VidyoClientInterface, ViewStyle, ScriptModel } from '.';
-import { Subject } from 'rxjs/Subject';
-import { Subscription } from 'rxjs/Subscription';
+import { Subject , Subscription } from 'rxjs';
 
 const VC_StatusSubject = new Subject<VidyoClientState>();
 
