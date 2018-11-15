@@ -4,8 +4,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
-    "test": "ng test",
+    "build": "ng test --project=video-client --watch=false && ng build --prod",
+    "test": "ng test --project=video-client",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "generate-lib": "ng build video-client --prod"
