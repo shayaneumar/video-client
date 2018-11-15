@@ -1,2 +1,2 @@
 export * from './Interfaces';
-export * from './vidyoClient';
+export * from './vidyo-client';
