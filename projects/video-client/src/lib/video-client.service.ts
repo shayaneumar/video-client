@@ -1,13 +1,19 @@
 import { Injectable } from '@angular/core';
-import { VidyoLocalCamera, VidyoRemoteCamera, CameraEvent, ParticipantEvent,
-        MicrophoneEvent, SpeakerEvent, WindowShareEvent } from './interfaces';
+import {
+    VidyoLocalCamera,
+    VidyoRemoteCamera,
+    CameraEvent,
+    ParticipantEvent,
+    MicrophoneEvent,
+    SpeakerEvent,
+    WindowShareEvent
+} from './interfaces';
 import * as Vidyo from './vidyo';
 import { Observable, Subject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
 })
-
 export class VideoClientService {
     public microphoneEnabled: boolean;
     public cameraEnabled: boolean;
@@ -26,7 +32,7 @@ export class VideoClientService {
         this._vidyoClient = new Vidyo.VidyoClient();
     }
 
-    public connect(options: { webrtc?: boolean, plugin?: boolean, viewId?: string | null }): Promise<Vidyo.VidyoClientState> {
+    public connect(options: { webrtc?: boolean; plugin?: boolean; viewId?: string | null }): Promise<Vidyo.VidyoClientState> {
         console.log('videoClient.connect()', options);
 
         // setup connect options
@@ -35,7 +41,8 @@ export class VideoClientService {
         opts.plugin = options.plugin || false;
 
         let state: Vidyo.VidyoClientState;
-        return this._vidyoClient.connect(opts)
+        return this._vidyoClient
+            .connect(opts)
             .then(_state => {
                 state = _state;
                 return this.createVidyoConnector({ viewId: options.viewId || null });
@@ -56,10 +63,9 @@ export class VideoClientService {
     }
 
     public getDebugStats(): Promise<any> {
-        return this._vidyoConnector.GetStatsJson()
-            .then(result => {
-                return JSON.parse(result);
-            });
+        return this._vidyoConnector.GetStatsJson().then(result => {
+            return JSON.parse(result);
+        });
     }
 
     public getParticipants(): Observable<ParticipantEvent> {
@@ -103,30 +109,42 @@ export class VideoClientService {
     }
 
     public assignViewToLocalCamera(options: {
-        viewId: string, localCamera: VidyoLocalCamera, displayCropped: boolean,
-        allowZoom: boolean
+        viewId: string;
+        localCamera: VidyoLocalCamera;
+        displayCropped: boolean;
+        allowZoom: boolean;
     }): Promise<boolean> {
         return this._vidyoConnector.AssignViewToLocalCamera({
-            viewId: options.viewId, localCamera: options.localCamera,
-            displayCropped: options.displayCropped, allowZoom: options.allowZoom
+            viewId: options.viewId,
+            localCamera: options.localCamera,
+            displayCropped: options.displayCropped,
+            allowZoom: options.allowZoom
         });
     }
 
     public assignViewToRemoteCamera(options: {
-        viewId: string, remoteCamera: VidyoRemoteCamera, displayCropped: boolean,
-        allowZoom: boolean
+        viewId: string;
+        remoteCamera: VidyoRemoteCamera;
+        displayCropped: boolean;
+        allowZoom: boolean;
     }): Promise<boolean> {
         return this._vidyoConnector.AssignViewToRemoteCamera({
-            viewId: options.viewId, remoteCamera: options.remoteCamera,
-            displayCropped: options.displayCropped, allowZoom: options.allowZoom
+            viewId: options.viewId,
+            remoteCamera: options.remoteCamera,
+            displayCropped: options.displayCropped,
+            allowZoom: options.allowZoom
         });
     }
 
-    public assignViewToCompositeRenderer(options: { viewId: string, viewStyle: Vidyo.ViewStyle, remoteParticipants: number })
-        : Promise<boolean> {
+    public assignViewToCompositeRenderer(options: {
+        viewId: string;
+        viewStyle: Vidyo.ViewStyle;
+        remoteParticipants: number;
+    }): Promise<boolean> {
         return this._vidyoConnector.AssignViewToCompositeRenderer({
             viewId: options.viewId,
-            viewStyle: options.viewStyle, remoteParticipants: options.remoteParticipants
+            viewStyle: options.viewStyle,
+            remoteParticipants: options.remoteParticipants
         });
     }
 
@@ -134,33 +152,30 @@ export class VideoClientService {
         return this._vidyoConnector.HideView({ viewId: options.viewId });
     }
 
-    public join(options: { viewId: string, token: string, displayName: string, resourceId: string }): Promise<boolean> {
-
+    public join(options: { viewId: string; token: string; displayName: string; resourceId: string }): Promise<boolean> {
         console.log('video.join()', options);
 
         return this.createVidyoConnector({ viewId: options.viewId })
-            .then((vidyoConnector) => {
-                return this._vidyoConnector.Connect(
-                    {
-                        host: 'prod.vidyo.io',
-                        token: options.token,
-                        displayName: options.displayName,
-                        resourceId: options.resourceId,
-                        // Define handlers for connection events.
-                        onSuccess: () => {
-                            console.log('vidyo.joinRoom():success');
-                            this._joinSubject.next(true);
-                        },
-                        onFailure: (reason) => {
-                            console.error('vidyo.joinRoom():failure', reason);
-                            this._joinSubject.error(reason);
-                        },
-                        onDisconnected: (reason) => {
-                            console.warn('vidyo.joinRoom():disconnected', reason);
-                            this._joinSubject.next(false);
-                        }
+            .then(vidyoConnector => {
+                return this._vidyoConnector.Connect({
+                    host: 'prod.vidyo.io',
+                    token: options.token,
+                    displayName: options.displayName,
+                    resourceId: options.resourceId,
+                    // Define handlers for connection events.
+                    onSuccess: () => {
+                        console.log('vidyo.joinRoom():success');
+                        this._joinSubject.next(true);
+                    },
+                    onFailure: reason => {
+                        console.error('vidyo.joinRoom():failure', reason);
+                        this._joinSubject.error(reason);
+                    },
+                    onDisconnected: reason => {
+                        console.warn('vidyo.joinRoom():disconnected', reason);
+                        this._joinSubject.next(false);
                     }
-                );
+                });
             })
             .catch(error => {
                 console.error('CreateVidyoConnector Failed');
@@ -169,9 +184,9 @@ export class VideoClientService {
     }
 
     public toggleCamera(): Promise<boolean> {
-
         const privacy: boolean = this.cameraEnabled ? true : false;
-        return this._vidyoConnector.SetCameraPrivacy({ privacy })
+        return this._vidyoConnector
+            .SetCameraPrivacy({ privacy })
             .then(() => {
                 this.cameraEnabled = !this.cameraEnabled;
                 return this.cameraEnabled;
@@ -183,10 +198,10 @@ export class VideoClientService {
     }
 
     public toggleMicrophone(): Promise<boolean> {
-
         const privacy: boolean = this.microphoneEnabled ? true : false;
 
-        return this._vidyoConnector.SetMicrophonePrivacy({ privacy })
+        return this._vidyoConnector
+            .SetMicrophonePrivacy({ privacy })
             .then(() => {
                 this.microphoneEnabled = !this.microphoneEnabled;
                 return this.microphoneEnabled;
@@ -202,23 +217,22 @@ export class VideoClientService {
     }
 
     private createVidyoConnector(options: { viewId: string | null }): Promise<Vidyo.VidyoConnector> {
-
         console.log('video.createVidyoConnector()', options);
         if (this._vidyoConnector) {
             console.log('video.createVidyoConnector():exists');
             return Promise.resolve(this._vidyoConnector);
         } else {
-
             console.log('video.createVidyoConnector():creating connector');
 
-            return this._vidyoClient.createVidyoConnector({
-                viewId: options.viewId, // Div ID where the composited video will be rendered, see VidyoConnector.html
-                viewStyle: 'VIDYO_CONNECTORVIEWSTYLE_Default', // Visual style of the composited renderer
-                remoteParticipants: 25, // Maximum number of participants
-                logFileFilter: 'warning',
-                logFileName: '',
-                userData: 0
-            })
+            return this._vidyoClient
+                .createVidyoConnector({
+                    viewId: options.viewId, // Div ID where the composited video will be rendered, see VidyoConnector.html
+                    viewStyle: 'VIDYO_CONNECTORVIEWSTYLE_Default', // Visual style of the composited renderer
+                    remoteParticipants: 25, // Maximum number of participants
+                    logFileFilter: 'warning',
+                    logFileName: '',
+                    userData: 0
+                })
                 .then(vc => {
                     this._vidyoConnector = vc;
 
@@ -248,39 +262,44 @@ export class VideoClientService {
     }
 
     private registerRemoteCameraEvents() {
-        this._vidyoConnector.RegisterRemoteCameraEventListener(
-            {
-                onAdded: (remoteCamera: Vidyo.VidyoRemoteCamera, participant: any) => {
-                    console.log('video:registerRemoteCameraEvents.onAdded', remoteCamera);
-                    const cameraEvent: CameraEvent = {
-                        eventType: 'added', camera: remoteCamera, cameraType: 'remote',
-                        participant: participant
-                    };
-                    this._cameraSubject.next(cameraEvent);
-                },
-                onRemoved: (remoteCamera: Vidyo.VidyoRemoteCamera, participant: any) => {
-                    console.log('video:registerRemoteCameraEvents.onRemoved', remoteCamera);
-                    const cameraEvent: CameraEvent = {
-                        eventType: 'removed', camera: remoteCamera, cameraType: 'remote',
-                        participant: participant
-                    };
-                    this._cameraSubject.next(cameraEvent);
-                },
-                onStateUpdated: (remoteCamera: Vidyo.VidyoRemoteCamera, participant: any, state: any) => {
-                    console.log('video:registerRemoteCameraEvents.onStateUpdated', remoteCamera);
-                    const cameraEvent: CameraEvent = {
-                        eventType: 'statechanged', camera: remoteCamera,
-                        cameraType: 'remote', state: state, participant: participant
-                    };
-                    this._cameraSubject.next(cameraEvent);
-                }
+        this._vidyoConnector.RegisterRemoteCameraEventListener({
+            onAdded: (remoteCamera: Vidyo.VidyoRemoteCamera, participant: any) => {
+                console.log('video:registerRemoteCameraEvents.onAdded', remoteCamera);
+                const cameraEvent: CameraEvent = {
+                    eventType: 'added',
+                    camera: remoteCamera,
+                    cameraType: 'remote',
+                    participant: participant
+                };
+                this._cameraSubject.next(cameraEvent);
+            },
+            onRemoved: (remoteCamera: Vidyo.VidyoRemoteCamera, participant: any) => {
+                console.log('video:registerRemoteCameraEvents.onRemoved', remoteCamera);
+                const cameraEvent: CameraEvent = {
+                    eventType: 'removed',
+                    camera: remoteCamera,
+                    cameraType: 'remote',
+                    participant: participant
+                };
+                this._cameraSubject.next(cameraEvent);
+            },
+            onStateUpdated: (remoteCamera: Vidyo.VidyoRemoteCamera, participant: any, state: any) => {
+                console.log('video:registerRemoteCameraEvents.onStateUpdated', remoteCamera);
+                const cameraEvent: CameraEvent = {
+                    eventType: 'statechanged',
+                    camera: remoteCamera,
+                    cameraType: 'remote',
+                    state: state,
+                    participant: participant
+                };
+                this._cameraSubject.next(cameraEvent);
             }
-        );
+        });
     }
 
     private registerLocalCameraEvents() {
-        this._vidyoConnector.RegisterLocalCameraEventListener(
-            {
+        this._vidyoConnector
+            .RegisterLocalCameraEventListener({
                 onAdded: (localCamera: Vidyo.VidyoLocalCamera) => {
                     console.log('video:registerLocalCameraEvents.onAdded', localCamera);
                     const cameraEvent: CameraEvent = { eventType: 'added', camera: localCamera, cameraType: 'local' };
@@ -298,86 +317,82 @@ export class VideoClientService {
                 },
                 onStateUpdated: (localCamera: Vidyo.VidyoLocalCamera, state: any) => {
                     console.log('video:registerLocalCameraEvents.onStateUpdated', localCamera, state);
-                    const cameraEvent: CameraEvent = { eventType: 'statechanged', camera: localCamera,
-                                                            state: state, cameraType: 'local' };
+                    const cameraEvent: CameraEvent = { eventType: 'statechanged', camera: localCamera, state: state, cameraType: 'local' };
                     this._cameraSubject.next(cameraEvent);
                 }
-            }
-        )
+            })
             .then(data => {
                 console.log('video:registerLocalCameraEvents()', data);
             });
     }
 
     private registerLocalMicrophoneEvents() {
-        this._vidyoConnector.RegisterLocalMicrophoneEventListener(
-            {
-                onAdded:
-                    (localMicrophone) => {
-                        console.log('video:registerLocalMicrophoneEvents.onAdded', localMicrophone);
-                        const microphoneEvent: MicrophoneEvent = { type: 'added', microphone: localMicrophone };
-                        this._microphoneSubject.next(microphoneEvent);
-                    },
-                onRemoved: (localMicrophone) => {
+        this._vidyoConnector
+            .RegisterLocalMicrophoneEventListener({
+                onAdded: localMicrophone => {
+                    console.log('video:registerLocalMicrophoneEvents.onAdded', localMicrophone);
+                    const microphoneEvent: MicrophoneEvent = { type: 'added', microphone: localMicrophone };
+                    this._microphoneSubject.next(microphoneEvent);
+                },
+                onRemoved: localMicrophone => {
                     console.log('video:registerLocalMicrophoneEvents.onRemoved', localMicrophone);
                     const microphoneEvent: MicrophoneEvent = { type: 'removed', microphone: localMicrophone };
                     this._microphoneSubject.next(microphoneEvent);
                 },
-                onSelected: (localMicrophone) => {
+                onSelected: localMicrophone => {
                     console.log('video:registerLocalMicrophoneEvents.onSelected', localMicrophone);
                     const microphoneEvent: MicrophoneEvent = { type: 'selected', microphone: localMicrophone };
                     this._microphoneSubject.next(microphoneEvent);
                 },
-                onStateUpdated: (localMicrophone) => {
+                onStateUpdated: localMicrophone => {
                     console.log('video:registerLocalMicrophoneEvents.onStateUpdated', localMicrophone);
                     const microphoneEvent: MicrophoneEvent = { type: 'statechanged', microphone: localMicrophone };
                     this._microphoneSubject.next(microphoneEvent);
                 }
-            }
-        ).then(data => {
-            console.log('video:registerLocalMicrophoneEvents()', data);
-        });
+            })
+            .then(data => {
+                console.log('video:registerLocalMicrophoneEvents()', data);
+            });
     }
 
     private registerLocalSpeakerEvents() {
-        this._vidyoConnector.RegisterLocalSpeakerEventListener(
-            {
-                onAdded: (localSpeaker) => {
+        this._vidyoConnector
+            .RegisterLocalSpeakerEventListener({
+                onAdded: localSpeaker => {
                     console.log('video:RegisterLocalSpeakerEventListener.onAdded', localSpeaker);
                     const speakerEvent: SpeakerEvent = { type: 'added', speaker: localSpeaker };
                     this._speakerSubject.next(speakerEvent);
                 },
-                onRemoved: (localSpeaker) => {
+                onRemoved: localSpeaker => {
                     console.log('video:RegisterLocalSpeakerEventListener.onRemoved', localSpeaker);
                     const speakerEvent: SpeakerEvent = { type: 'removed', speaker: localSpeaker };
                     this._speakerSubject.next(speakerEvent);
                 },
-                onSelected: (localSpeaker) => {
+                onSelected: localSpeaker => {
                     console.log('video:RegisterLocalSpeakerEventListener.onSelected', localSpeaker);
                     const speakerEvent: SpeakerEvent = { type: 'selected', speaker: localSpeaker };
                     this._speakerSubject.next(speakerEvent);
                 },
-                onStateUpdated: (localSpeaker) => {
+                onStateUpdated: localSpeaker => {
                     console.log('video:RegisterLocalSpeakerEventListener.onStateUpdated', localSpeaker);
                     const speakerEvent: SpeakerEvent = { type: 'statechanged', speaker: localSpeaker };
                     this._speakerSubject.next(speakerEvent);
                 }
-            }
-        ).then(data => {
-            console.log('video:RegisterLocalSpeakerEventListener()', data);
-        });
+            })
+            .then(data => {
+                console.log('video:RegisterLocalSpeakerEventListener()', data);
+            });
     }
 
     private registerParticipantEvents() {
-        this._vidyoConnector.RegisterParticipantEventListener(
-            {
-                onJoined:
-                    (participant) => {
-                        const participantEvent: ParticipantEvent = { type: 'joined', participant: participant, audioOnly: false };
-                        this._participantSubject.next(participantEvent);
-                        console.log('video:registerParticipantEvents.onJoined', participantEvent);
-                    },
-                onLeft: (participant) => {
+        this._vidyoConnector
+            .RegisterParticipantEventListener({
+                onJoined: participant => {
+                    const participantEvent: ParticipantEvent = { type: 'joined', participant: participant, audioOnly: false };
+                    this._participantSubject.next(participantEvent);
+                    console.log('video:registerParticipantEvents.onJoined', participantEvent);
+                },
+                onLeft: participant => {
                     const participantEvent: ParticipantEvent = { type: 'left', participant: participant, audioOnly: false };
                     this._participantSubject.next(participantEvent);
                     console.log('video:registerParticipantEvents.onLeft', participantEvent);
@@ -385,21 +400,22 @@ export class VideoClientService {
                 onDynamicChanged: (participants, remoteCameras) => {
                     console.log('video:registerParticipantEvents.onDynamicChanged', participants, remoteCameras);
                     const participantEvent: ParticipantEvent = {
-                        type: 'dynamicchanged', participant: participants[0],
-                        dynamicParticipants: participants, dynamicRemoteCameras: remoteCameras
+                        type: 'dynamicchanged',
+                        participant: participants[0],
+                        dynamicParticipants: participants,
+                        dynamicRemoteCameras: remoteCameras
                     };
                     this._participantSubject.next(participantEvent);
                 },
                 onLoudestChanged: (participant, audioOnly) => {
                     console.log('video:registerParticipantEvents.onLoudestChanged', participant, audioOnly);
-                    const participantEvent: ParticipantEvent = { type: 'loudestchanged', participant: participant,
-                                                                      audioOnly: audioOnly };
+                    const participantEvent: ParticipantEvent = { type: 'loudestchanged', participant: participant, audioOnly: audioOnly };
                     this._participantSubject.next(participantEvent);
                 }
-            }
-        ).then(data => {
-            console.log('video:registerParticipantEvents()', data);
-        });
+            })
+            .then(data => {
+                console.log('video:registerParticipantEvents()', data);
+            });
     }
 
     private registerLocalWindowShareEvents(): Promise<void> {
@@ -408,47 +424,42 @@ export class VideoClientService {
         //  webrtc: a popup is displayed (an extension to Firefox/Chrome) which allows the user to
         //  select a share; once selected, that share will trigger an onAdded event
 
-        return this._vidyoConnector.RegisterLocalWindowShareEventListener(
-            {
-                onAdded:
-                    (localWindowShare) => {
-                        console.log('video:registerLocalWindowShareEvents.onAdded', localWindowShare);
+        return this._vidyoConnector
+            .RegisterLocalWindowShareEventListener({
+                onAdded: localWindowShare => {
+                    console.log('video:registerLocalWindowShareEvents.onAdded', localWindowShare);
 
-                        this._vidyoClient.getConnectState()
-                            .then(_status => {
-                                if (_status.webrtc) {
-                                    this._vidyoConnector.SelectLocalWindowShare({ localWindowShare:localWindowShare })
-                                        .then(() => {
-                                            console.log('video:registerLocalWindowShareEvents.onAdded.SelectLocalWindowShare(): success');
-                                            const evt: WindowShareEvent = { type: 'added', windowShare: localWindowShare };
-                                            this._windowShareSubject.next(evt);
-                                        })
-                                        .catch(error => {
-                                            console.log('video:registerLocalWindowShareEvents.onAdded.SelectLocalWindowShare(): failed',
-                                                error);
-                                        });
-                                }
-                            });
-
-
-                    },
-                onRemoved: (localWindowShare) => {
+                    this._vidyoClient.getConnectState().then(_status => {
+                        if (_status.webrtc) {
+                            this._vidyoConnector
+                                .SelectLocalWindowShare({ localWindowShare })
+                                .then(() => {
+                                    console.log('video:registerLocalWindowShareEvents.onAdded.SelectLocalWindowShare(): success');
+                                    const evt: WindowShareEvent = { type: 'added', windowShare: localWindowShare };
+                                    this._windowShareSubject.next(evt);
+                                })
+                                .catch(error => {
+                                    console.log('video:registerLocalWindowShareEvents.onAdded.SelectLocalWindowShare(): failed', error);
+                                });
+                        }
+                    });
+                },
+                onRemoved: localWindowShare => {
                     console.log('video:registerLocalWindowShareEvents.onRemoved', localWindowShare);
                     const windowShareEvent: WindowShareEvent = { type: 'removed', windowShare: localWindowShare };
                     this._windowShareSubject.next(windowShareEvent);
                 },
-                onSelected: (localWindowShare) => {
+                onSelected: localWindowShare => {
                     console.log('video:registerLocalWindowShareEvents.onSelected', localWindowShare);
                     const windowShareEvent: WindowShareEvent = { type: 'selected', windowShare: localWindowShare };
                     this._windowShareSubject.next(windowShareEvent);
                 },
-                onStateUpdated: (localWindowShare) => {
+                onStateUpdated: localWindowShare => {
                     console.log('video:registerLocalWindowShareEvents.onStateUpdated', localWindowShare);
                     const windowShareEvent: WindowShareEvent = { type: 'statechanged', windowShare: localWindowShare };
                     this._windowShareSubject.next(windowShareEvent);
                 }
-            }
-        )
+            })
             .then(result => {
                 if (result) {
                     console.log('video:registerLocalWindowShareEvents(): success', result);
@@ -458,4 +469,3 @@ export class VideoClientService {
             });
     }
 }
-
