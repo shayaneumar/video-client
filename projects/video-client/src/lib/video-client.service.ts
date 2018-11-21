@@ -417,7 +417,7 @@ export class VideoClientService {
                         this._vidyoClient.getConnectState()
                             .then(_status => {
                                 if (_status.webrtc) {
-                                    this._vidyoConnector.SelectLocalWindowShare(localWindowShare)
+                                    this._vidyoConnector.SelectLocalWindowShare({ localWindowShare:localWindowShare })
                                         .then(() => {
                                             console.log('video:registerLocalWindowShareEvents.onAdded.SelectLocalWindowShare(): success');
                                             const evt: WindowShareEvent = { type: 'added', windowShare: localWindowShare };
