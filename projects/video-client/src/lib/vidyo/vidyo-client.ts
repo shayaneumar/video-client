@@ -4,7 +4,7 @@ import { Subject, Subscription } from 'rxjs';
 const VC_StatusSubject = new Subject<VidyoClientState>();
 
 export class VidyoClient {
-    private VIDYOCLIENT = 'https://static.vidyo.io/4.1.24.8/javascript/VidyoClient/VidyoClient.js';
+    private VIDYOCLIENT = 'https://static.vidyo.io/4.1.24.15/javascript/VidyoClient/VidyoClient.js';
     private _scripts: ScriptModel[] = [];
 
     vidyoConnector: VidyoConnector;
