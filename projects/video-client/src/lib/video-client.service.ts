@@ -15,11 +15,11 @@ import { Observable, Subject } from 'rxjs';
     providedIn: 'root'
 })
 export class VideoClientService {
-    public microphoneEnabled: boolean;
-    public cameraEnabled: boolean;
+    microphoneEnabled = false;
+    cameraEnabled = false;
 
-    private _vidyoConnector: Vidyo.VidyoConnector;
-    private _vidyoClient: Vidyo.VidyoClient;
+    vidyoConnector: Vidyo.VidyoConnector;
+    vidyoClient: Vidyo.VidyoClient;
 
     private _cameraSubject = new Subject<CameraEvent>();
     private _participantSubject = new Subject<ParticipantEvent>();
@@ -29,7 +29,7 @@ export class VideoClientService {
     private _joinSubject: Subject<boolean> = new Subject<boolean>();
 
     constructor() {
-        this._vidyoClient = new Vidyo.VidyoClient();
+        this.vidyoClient = new Vidyo.VidyoClient();
     }
 
     public connect(options: { webrtc?: boolean; plugin?: boolean; viewId?: string | null }): Promise<Vidyo.VidyoClientState> {
@@ -41,7 +41,7 @@ export class VideoClientService {
         opts.plugin = options.plugin || false;
 
         let state: Vidyo.VidyoClientState;
-        return this._vidyoClient
+        return this.vidyoClient
             .connect(opts)
             .then(_state => {
                 state = _state;
@@ -56,14 +56,14 @@ export class VideoClientService {
 
     public disconnect(): void {
         console.log('videoClient.disconnect()');
-        if (this._vidyoConnector) {
-            this._vidyoConnector.Disconnect();
-            this._vidyoConnector = undefined;
+        if (this.vidyoConnector) {
+            this.vidyoConnector.Disconnect();
+            this.vidyoConnector = undefined;
         }
     }
 
     public getDebugStats(): Promise<any> {
-        return this._vidyoConnector.GetStatsJson().then(result => {
+        return this.vidyoConnector.GetStatsJson().then(result => {
             return JSON.parse(result);
         });
     }
@@ -89,19 +89,19 @@ export class VideoClientService {
     }
 
     public selectCamera(options: { camera: any }): Promise<boolean> {
-        return this._vidyoConnector.SelectLocalCamera({ localCamera: options.camera });
+        return this.vidyoConnector.SelectLocalCamera({ localCamera: options.camera });
     }
 
     public selectSpeaker(options: { speaker: any }): Promise<boolean> {
-        return this._vidyoConnector.SelectLocalSpeaker({ localSpeaker: options.speaker });
+        return this.vidyoConnector.SelectLocalSpeaker({ localSpeaker: options.speaker });
     }
 
     public selectMicrophone(options: { microphone: any }): Promise<boolean> {
-        return this._vidyoConnector.SelectLocalMicrophone({ localMicrophone: options.microphone });
+        return this.vidyoConnector.SelectLocalMicrophone({ localMicrophone: options.microphone });
     }
 
     public cycleCamera(): Promise<boolean> {
-        return this._vidyoConnector.CycleCamera();
+        return this.vidyoConnector.CycleCamera();
     }
 
     public getJoinStatus(): Observable<boolean> {
@@ -114,7 +114,7 @@ export class VideoClientService {
         displayCropped: boolean;
         allowZoom: boolean;
     }): Promise<boolean> {
-        return this._vidyoConnector.AssignViewToLocalCamera({
+        return this.vidyoConnector.AssignViewToLocalCamera({
             viewId: options.viewId,
             localCamera: options.localCamera,
             displayCropped: options.displayCropped,
@@ -128,7 +128,7 @@ export class VideoClientService {
         displayCropped: boolean;
         allowZoom: boolean;
     }): Promise<boolean> {
-        return this._vidyoConnector.AssignViewToRemoteCamera({
+        return this.vidyoConnector.AssignViewToRemoteCamera({
             viewId: options.viewId,
             remoteCamera: options.remoteCamera,
             displayCropped: options.displayCropped,
@@ -141,7 +141,7 @@ export class VideoClientService {
         viewStyle: Vidyo.ViewStyle;
         remoteParticipants: number;
     }): Promise<boolean> {
-        return this._vidyoConnector.AssignViewToCompositeRenderer({
+        return this.vidyoConnector.AssignViewToCompositeRenderer({
             viewId: options.viewId,
             viewStyle: options.viewStyle,
             remoteParticipants: options.remoteParticipants
@@ -149,7 +149,7 @@ export class VideoClientService {
     }
 
     public hideView(options: { viewId: string }): Promise<boolean> {
-        return this._vidyoConnector.HideView({ viewId: options.viewId });
+        return this.vidyoConnector.HideView({ viewId: options.viewId });
     }
 
     public join(options: { viewId: string; token: string; displayName: string; resourceId: string }): Promise<boolean> {
@@ -157,7 +157,7 @@ export class VideoClientService {
 
         return this.createVidyoConnector({ viewId: options.viewId })
             .then(vidyoConnector => {
-                return this._vidyoConnector.Connect({
+                return this.vidyoConnector.Connect({
                     host: 'prod.vidyo.io',
                     token: options.token,
                     displayName: options.displayName,
@@ -185,7 +185,7 @@ export class VideoClientService {
 
     public toggleCamera(): Promise<boolean> {
         const privacy: boolean = this.cameraEnabled ? true : false;
-        return this._vidyoConnector
+        return this.vidyoConnector
             .SetCameraPrivacy({ privacy })
             .then(() => {
                 this.cameraEnabled = !this.cameraEnabled;
@@ -200,7 +200,7 @@ export class VideoClientService {
     public toggleMicrophone(): Promise<boolean> {
         const privacy: boolean = this.microphoneEnabled ? true : false;
 
-        return this._vidyoConnector
+        return this.vidyoConnector
             .SetMicrophonePrivacy({ privacy })
             .then(() => {
                 this.microphoneEnabled = !this.microphoneEnabled;
@@ -218,13 +218,13 @@ export class VideoClientService {
 
     private createVidyoConnector(options: { viewId: string | null }): Promise<Vidyo.VidyoConnector> {
         console.log('video.createVidyoConnector()', options);
-        if (this._vidyoConnector) {
+        if (this.vidyoConnector) {
             console.log('video.createVidyoConnector():exists');
-            return Promise.resolve(this._vidyoConnector);
+            return Promise.resolve(this.vidyoConnector);
         } else {
             console.log('video.createVidyoConnector():creating connector');
 
-            return this._vidyoClient
+            return this.vidyoClient
                 .createVidyoConnector({
                     viewId: options.viewId, // Div ID where the composited video will be rendered, see VidyoConnector.html
                     viewStyle: 'VIDYO_CONNECTORVIEWSTYLE_Default', // Visual style of the composited renderer
@@ -234,7 +234,7 @@ export class VideoClientService {
                     userData: 0
                 })
                 .then(vc => {
-                    this._vidyoConnector = vc;
+                    this.vidyoConnector = vc;
 
                     console.log('video.createVidyoConnector().registerDeviceEvents');
                     this.registerDeviceEvents();
@@ -254,15 +254,15 @@ export class VideoClientService {
     }
 
     public unregisterDeviceEvents() {
-        this._vidyoConnector.UnregisterParticipantEventListener();
-        this._vidyoConnector.UnregisterLocalCameraEventListener();
-        this._vidyoConnector.UnregisterLocalMicrophoneEventListener();
-        this._vidyoConnector.UnregisterLocalSpeakerEventListener();
-        this._vidyoConnector.UnregisterRemoteCameraEventListener();
+        this.vidyoConnector.UnregisterParticipantEventListener();
+        this.vidyoConnector.UnregisterLocalCameraEventListener();
+        this.vidyoConnector.UnregisterLocalMicrophoneEventListener();
+        this.vidyoConnector.UnregisterLocalSpeakerEventListener();
+        this.vidyoConnector.UnregisterRemoteCameraEventListener();
     }
 
     private registerRemoteCameraEvents() {
-        this._vidyoConnector.RegisterRemoteCameraEventListener({
+        this.vidyoConnector.RegisterRemoteCameraEventListener({
             onAdded: (remoteCamera: Vidyo.VidyoRemoteCamera, participant: any) => {
                 console.log('video:registerRemoteCameraEvents.onAdded', remoteCamera);
                 const cameraEvent: CameraEvent = {
@@ -298,7 +298,7 @@ export class VideoClientService {
     }
 
     private registerLocalCameraEvents() {
-        this._vidyoConnector
+        this.vidyoConnector
             .RegisterLocalCameraEventListener({
                 onAdded: (localCamera: Vidyo.VidyoLocalCamera) => {
                     console.log('video:registerLocalCameraEvents.onAdded', localCamera);
@@ -327,7 +327,7 @@ export class VideoClientService {
     }
 
     private registerLocalMicrophoneEvents() {
-        this._vidyoConnector
+        this.vidyoConnector
             .RegisterLocalMicrophoneEventListener({
                 onAdded: localMicrophone => {
                     console.log('video:registerLocalMicrophoneEvents.onAdded', localMicrophone);
@@ -356,7 +356,7 @@ export class VideoClientService {
     }
 
     private registerLocalSpeakerEvents() {
-        this._vidyoConnector
+        this.vidyoConnector
             .RegisterLocalSpeakerEventListener({
                 onAdded: localSpeaker => {
                     console.log('video:RegisterLocalSpeakerEventListener.onAdded', localSpeaker);
@@ -385,7 +385,7 @@ export class VideoClientService {
     }
 
     private registerParticipantEvents() {
-        this._vidyoConnector
+        this.vidyoConnector
             .RegisterParticipantEventListener({
                 onJoined: participant => {
                     const participantEvent: ParticipantEvent = { type: 'joined', participant: participant, audioOnly: false };
@@ -424,14 +424,14 @@ export class VideoClientService {
         //  webrtc: a popup is displayed (an extension to Firefox/Chrome) which allows the user to
         //  select a share; once selected, that share will trigger an onAdded event
 
-        return this._vidyoConnector
+        return this.vidyoConnector
             .RegisterLocalWindowShareEventListener({
                 onAdded: localWindowShare => {
                     console.log('video:registerLocalWindowShareEvents.onAdded', localWindowShare);
 
-                    this._vidyoClient.getConnectState().then(_status => {
+                    this.vidyoClient.getConnectState().then(_status => {
                         if (_status.webrtc) {
-                            this._vidyoConnector
+                            this.vidyoConnector
                                 .SelectLocalWindowShare({ localWindowShare })
                                 .then(() => {
                                     console.log('video:registerLocalWindowShareEvents.onAdded.SelectLocalWindowShare(): success');
