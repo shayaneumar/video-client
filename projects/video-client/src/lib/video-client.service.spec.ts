@@ -471,4 +471,157 @@ describe('VideoClientService: ', () => {
             });
         });
     });
+
+    describe('startWindowShare', () => {
+        it('calls vidyoConnector RegisterLocalWindowShareEventListener method', () => {
+            // Arrenge
+            const service = new VideoClientService();
+            service.vidyoConnector = <any>{ RegisterLocalWindowShareEventListener: Function };
+            spyOn(service.vidyoConnector, 'RegisterLocalWindowShareEventListener').and.returnValue(Promise.resolve());
+
+            // Act
+            service.startWindowShare();
+
+            // Assert
+            expect(service.vidyoConnector.RegisterLocalWindowShareEventListener).toHaveBeenCalledWith({
+                onAdded: jasmine.any(Function),
+                onRemoved: jasmine.any(Function),
+                onSelected: jasmine.any(Function),
+                onStateUpdated: jasmine.any(Function)
+            });
+        });
+
+        it('throws error when promise resolved with result', () => {
+            // Arrenge
+            const service = new VideoClientService();
+            service.vidyoConnector = <any>{ RegisterLocalWindowShareEventListener: Function };
+            spyOn(service.vidyoConnector, 'RegisterLocalWindowShareEventListener').and.returnValue(Promise.resolve());
+
+            // Act
+            // Assert
+            expect(service.startWindowShare).toThrowError();
+        });
+    });
+
+    describe('registerDeviceEvents', () => {
+        it('calls all devices registered method', () => {
+            // Arrenge
+            const service = new VideoClientService();
+
+            spyOn(service, 'registerParticipantEvents');
+            spyOn(service, 'registerLocalCameraEvents');
+            spyOn(service, 'registerLocalMicrophoneEvents');
+            spyOn(service, 'registerLocalSpeakerEvents');
+            spyOn(service, 'registerRemoteCameraEvents');
+
+            // Act
+            service.registerDeviceEvents();
+
+            // Assert
+            expect(service.registerParticipantEvents).toHaveBeenCalled();
+            expect(service.registerLocalCameraEvents).toHaveBeenCalled();
+            expect(service.registerLocalMicrophoneEvents).toHaveBeenCalled();
+            expect(service.registerLocalSpeakerEvents).toHaveBeenCalled();
+            expect(service.registerRemoteCameraEvents).toHaveBeenCalled();
+        });
+    });
+
+    describe('registerRemoteCameraEvents', () => {
+        it('calls vidyoConnector RegisterRemoteCameraEventListener method', () => {
+            // Arrenge
+            const service = new VideoClientService();
+            service.vidyoConnector = <any>{ RegisterRemoteCameraEventListener: Function };
+            spyOn(service.vidyoConnector, 'RegisterRemoteCameraEventListener').and.returnValue(Promise.resolve());
+
+            // Act
+            service.registerRemoteCameraEvents();
+
+            // Assert
+            expect(service.vidyoConnector.RegisterRemoteCameraEventListener).toHaveBeenCalledWith({
+                onAdded: jasmine.any(Function),
+                onRemoved: jasmine.any(Function),
+                onStateUpdated: jasmine.any(Function)
+            });
+        });
+    });
+
+    describe('registerLocalCameraEvents', () => {
+        it('calls vidyoConnector RegisterLocalCameraEventListener method', () => {
+            // Arrenge
+            const service = new VideoClientService();
+            service.vidyoConnector = <any>{ RegisterLocalCameraEventListener: Function };
+            spyOn(service.vidyoConnector, 'RegisterLocalCameraEventListener').and.returnValue(Promise.resolve());
+
+            // Act
+            service.registerLocalCameraEvents();
+
+            // Assert
+            expect(service.vidyoConnector.RegisterLocalCameraEventListener).toHaveBeenCalledWith({
+                onAdded: jasmine.any(Function),
+                onRemoved: jasmine.any(Function),
+                onSelected: jasmine.any(Function),
+                onStateUpdated: jasmine.any(Function)
+            });
+        });
+    });
+
+    describe('registerLocalMicrophoneEvents', () => {
+        it('calls vidyoConnector RegisterLocalMicrophoneEventListener method', () => {
+            // Arrenge
+            const service = new VideoClientService();
+            service.vidyoConnector = <any>{ RegisterLocalMicrophoneEventListener: Function };
+            spyOn(service.vidyoConnector, 'RegisterLocalMicrophoneEventListener').and.returnValue(Promise.resolve());
+
+            // Act
+            service.registerLocalMicrophoneEvents();
+
+            // Assert
+            expect(service.vidyoConnector.RegisterLocalMicrophoneEventListener).toHaveBeenCalledWith({
+                onAdded: jasmine.any(Function),
+                onRemoved: jasmine.any(Function),
+                onSelected: jasmine.any(Function),
+                onStateUpdated: jasmine.any(Function)
+            });
+        });
+    });
+
+    describe('registerLocalSpeakerEvents', () => {
+        it('calls vidyoConnector RegisterLocalSpeakerEventListener method', () => {
+            // Arrenge
+            const service = new VideoClientService();
+            service.vidyoConnector = <any>{ RegisterLocalSpeakerEventListener: Function };
+            spyOn(service.vidyoConnector, 'RegisterLocalSpeakerEventListener').and.returnValue(Promise.resolve());
+
+            // Act
+            service.registerLocalSpeakerEvents();
+
+            // Assert
+            expect(service.vidyoConnector.RegisterLocalSpeakerEventListener).toHaveBeenCalledWith({
+                onAdded: jasmine.any(Function),
+                onRemoved: jasmine.any(Function),
+                onSelected: jasmine.any(Function),
+                onStateUpdated: jasmine.any(Function)
+            });
+        });
+    });
+
+    describe('registerParticipantEvents', () => {
+        it('calls vidyoConnector RegisterParticipantEventListener method', () => {
+            // Arrenge
+            const service = new VideoClientService();
+            service.vidyoConnector = <any>{ RegisterParticipantEventListener: Function };
+            spyOn(service.vidyoConnector, 'RegisterParticipantEventListener').and.returnValue(Promise.resolve());
+
+            // Act
+            service.registerParticipantEvents();
+
+            // Assert
+            expect(service.vidyoConnector.RegisterParticipantEventListener).toHaveBeenCalledWith({
+                onJoined: jasmine.any(Function),
+                onLeft: jasmine.any(Function),
+                onDynamicChanged: jasmine.any(Function),
+                onLoudestChanged: jasmine.any(Function)
+            });
+        });
+    });
 });

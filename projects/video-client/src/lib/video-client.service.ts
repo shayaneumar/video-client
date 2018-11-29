@@ -245,7 +245,7 @@ export class VideoClientService {
         }
     }
 
-    public registerDeviceEvents() {
+    registerDeviceEvents() {
         this.registerParticipantEvents();
         this.registerLocalCameraEvents();
         this.registerLocalMicrophoneEvents();
@@ -253,7 +253,7 @@ export class VideoClientService {
         this.registerRemoteCameraEvents();
     }
 
-    public unregisterDeviceEvents() {
+    unregisterDeviceEvents() {
         this.vidyoConnector.UnregisterParticipantEventListener();
         this.vidyoConnector.UnregisterLocalCameraEventListener();
         this.vidyoConnector.UnregisterLocalMicrophoneEventListener();
@@ -261,7 +261,7 @@ export class VideoClientService {
         this.vidyoConnector.UnregisterRemoteCameraEventListener();
     }
 
-    private registerRemoteCameraEvents() {
+    registerRemoteCameraEvents() {
         this.vidyoConnector.RegisterRemoteCameraEventListener({
             onAdded: (remoteCamera: Vidyo.VidyoRemoteCamera, participant: any) => {
                 console.log('video:registerRemoteCameraEvents.onAdded', remoteCamera);
@@ -297,7 +297,7 @@ export class VideoClientService {
         });
     }
 
-    private registerLocalCameraEvents() {
+    registerLocalCameraEvents() {
         this.vidyoConnector
             .RegisterLocalCameraEventListener({
                 onAdded: (localCamera: Vidyo.VidyoLocalCamera) => {
@@ -326,7 +326,7 @@ export class VideoClientService {
             });
     }
 
-    private registerLocalMicrophoneEvents() {
+    registerLocalMicrophoneEvents() {
         this.vidyoConnector
             .RegisterLocalMicrophoneEventListener({
                 onAdded: localMicrophone => {
@@ -355,7 +355,7 @@ export class VideoClientService {
             });
     }
 
-    private registerLocalSpeakerEvents() {
+    registerLocalSpeakerEvents() {
         this.vidyoConnector
             .RegisterLocalSpeakerEventListener({
                 onAdded: localSpeaker => {
@@ -384,7 +384,7 @@ export class VideoClientService {
             });
     }
 
-    private registerParticipantEvents() {
+    registerParticipantEvents() {
         this.vidyoConnector
             .RegisterParticipantEventListener({
                 onJoined: participant => {
