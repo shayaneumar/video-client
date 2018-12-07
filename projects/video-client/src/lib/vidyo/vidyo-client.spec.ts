@@ -32,9 +32,11 @@ describe('VidyoClient', () => {
         it('creates a new connector object', () => {
             // Arrange
             const vidyoClient = new VidyoClient();
-            vidyoClient.vidyoClient = jasmine.createSpyObj('vidyoClient', {
-                CreateVidyoConnector: Promise.resolve({})
-            });
+            vidyoClient.vidyoClient = <any>{
+                CreateVidyoConnector() {
+                    return Promise.resolve({});
+                }
+            };
 
             // Act + Assert
             vidyoClient
