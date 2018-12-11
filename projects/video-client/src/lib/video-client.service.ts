@@ -155,9 +155,7 @@ export class VideoClientService {
                                 const evt: WindowShareEvent = { type: 'added', windowShare: localWindowShare };
                                 this._windowShareSubject.next(evt);
                             })
-                            .catch(error => {
-                                console.log('video:registerLocalWindowShareEvents.onAdded.SelectLocalWindowShare(): failed', error);
-                            });
+                            .catch(error => {});
                     }
                 });
             },

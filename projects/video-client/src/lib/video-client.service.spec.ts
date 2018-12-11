@@ -1,4 +1,7 @@
 import { VideoClientService } from './video-client.service';
+import { VidyoRemoteCamera } from './interfaces';
+import * as Vidyo from './vidyo';
+import { VidyoParticipant } from './vidyo';
 
 describe('VideoClientService: ', () => {
     describe('constructor: ', () => {
@@ -621,6 +624,475 @@ describe('VideoClientService: ', () => {
                 onLeft: jasmine.any(Function),
                 onDynamicChanged: jasmine.any(Function),
                 onLoudestChanged: jasmine.any(Function)
+            });
+        });
+    });
+
+    describe('eventHandler-vidyo event handlers', () => {
+        describe('vidyoConnector', () => {
+            it('onSuccess publish join status true', () => {
+                // Arrenge
+                const service = new VideoClientService();
+
+                service.getJoinStatus().subscribe(status => {
+                    // Assert
+                    expect(status).toBeTruthy();
+                });
+
+                // Act
+                service.eventHandler.vidyoConnector.onSuccess();
+            });
+
+            it('onFailure publish error with error message', () => {
+                // Arrenge
+                const service = new VideoClientService();
+
+                service.getJoinStatus().subscribe(null, reason => {
+                    // Assert
+                    expect(reason).toBe('error occured');
+                });
+
+                // Act
+                service.eventHandler.vidyoConnector.onFailure('error occured');
+            });
+
+            it('onDisconnected publish join status false', () => {
+                // Arrenge
+                const service = new VideoClientService();
+
+                service.getJoinStatus().subscribe(() => {
+                    // Assert
+                    expect(status).toBeFalsy();
+                });
+
+                // Act
+                service.eventHandler.vidyoConnector.onDisconnected('disconnected');
+            });
+        });
+
+        describe('remoteCamera', () => {
+            it('onAdded raises remote camera event', () => {
+                // Arrenge
+                const service = new VideoClientService();
+                const remoteCamera = <Vidyo.VidyoRemoteCamera>{ id: 'camera1' };
+                const participant = { id: 'participant1' };
+
+                service.getCameras().subscribe(cameraEvent => {
+                    // Assert
+                    expect(cameraEvent.eventType).toBe('added');
+                    expect(cameraEvent.camera.id).toBe('camera1');
+                    expect(cameraEvent.cameraType).toBe('remote');
+                    expect(cameraEvent.participant.id).toBe('participant1');
+                });
+
+                // Act
+                service.eventHandler.remoteCamera.onAdded(remoteCamera, participant);
+            });
+
+            it('onRemoved raises remote camera event', () => {
+                // Arrenge
+                const service = new VideoClientService();
+                const remoteCamera = <Vidyo.VidyoRemoteCamera>{ id: 'camera1' };
+                const participant = { id: 'participant1' };
+
+                service.getCameras().subscribe(cameraEvent => {
+                    // Assert
+                    expect(cameraEvent.eventType).toBe('removed');
+                    expect(cameraEvent.camera.id).toEqual('camera1');
+                    expect(cameraEvent.cameraType).toBe('remote');
+                    expect(cameraEvent.participant.id).toEqual('participant1');
+                });
+
+                // Act
+                service.eventHandler.remoteCamera.onRemoved(remoteCamera, participant);
+            });
+
+            it('onStateUpdated raises remote camera event', () => {
+                // Arrenge
+                const service = new VideoClientService();
+                const remoteCamera = <Vidyo.VidyoRemoteCamera>{ id: 'camera1' };
+                const participant = { id: 'participant1' };
+                const state = 'connected';
+
+                service.getCameras().subscribe(cameraEvent => {
+                    // Assert
+                    expect(cameraEvent.eventType).toBe('statechanged');
+                    expect(cameraEvent.camera.id).toEqual('camera1');
+                    expect(cameraEvent.cameraType).toBe('remote');
+                    expect(cameraEvent.state).toEqual('connected');
+                    expect(cameraEvent.participant.id).toEqual('participant1');
+                });
+
+                // Act
+                service.eventHandler.remoteCamera.onStateUpdated(remoteCamera, participant, state);
+            });
+        });
+
+        describe('localCamera', () => {
+            it('onAdded raises local camera event', () => {
+                // Arrenge
+                const service = new VideoClientService();
+                const localCamera = <Vidyo.VidyoLocalCamera>{ id: 'camera1' };
+
+                service.getCameras().subscribe(cameraEvent => {
+                    // Assert
+                    expect(cameraEvent.eventType).toBe('added');
+                    expect(cameraEvent.camera.id).toBe('camera1');
+                    expect(cameraEvent.cameraType).toBe('local');
+                });
+
+                // Act
+                service.eventHandler.localCamera.onAdded(localCamera);
+            });
+
+            it('onRemoved raises local camera event', () => {
+                // Arrenge
+                const service = new VideoClientService();
+                const localCamera = <Vidyo.VidyoLocalCamera>{ id: 'camera1' };
+
+                service.getCameras().subscribe(cameraEvent => {
+                    // Assert
+                    expect(cameraEvent.eventType).toBe('removed');
+                    expect(cameraEvent.camera.id).toBe('camera1');
+                    expect(cameraEvent.cameraType).toBe('local');
+                });
+
+                // Act
+                service.eventHandler.localCamera.onRemoved(localCamera);
+            });
+
+            it('onSelected raises local camera event', () => {
+                // Arrenge
+                const service = new VideoClientService();
+                const localCamera = <Vidyo.VidyoLocalCamera>{ id: 'camera1' };
+
+                service.getCameras().subscribe(cameraEvent => {
+                    // Assert
+                    expect(cameraEvent.eventType).toBe('selected');
+                    expect(cameraEvent.camera.id).toBe('camera1');
+                    expect(cameraEvent.cameraType).toBe('local');
+                });
+
+                // Act
+                service.eventHandler.localCamera.onSelected(localCamera);
+            });
+
+            it('onStateUpdated raises local camera event', () => {
+                // Arrenge
+                const service = new VideoClientService();
+                const localCamera = <Vidyo.VidyoLocalCamera>{ id: 'camera1' };
+                const state = 'connected';
+
+                service.getCameras().subscribe(cameraEvent => {
+                    // Assert
+                    expect(cameraEvent.eventType).toBe('statechanged');
+                    expect(cameraEvent.camera.id).toBe('camera1');
+                    expect(cameraEvent.cameraType).toBe('local');
+                    expect(cameraEvent.state).toBe('connected');
+                });
+
+                // Act
+                service.eventHandler.localCamera.onStateUpdated(localCamera, state);
+            });
+        });
+
+        describe('localMicrophone', () => {
+            it('onAdded raises local microphone event', () => {
+                // Arrenge
+                const service = new VideoClientService();
+                const localMicrophone = { id: 'microphone1' };
+
+                service.getMicrophones().subscribe(microphoneEvent => {
+                    // Assert
+                    expect(microphoneEvent.type).toBe('added');
+                    expect(microphoneEvent.microphone.id).toBe('microphone1');
+                });
+
+                // Act
+                service.eventHandler.localMicrophone.onAdded(localMicrophone);
+            });
+
+            it('onRemoved raises local microphone event', () => {
+                // Arrenge
+                const service = new VideoClientService();
+                const localMicrophone = { id: 'microphone1' };
+
+                service.getMicrophones().subscribe(microphoneEvent => {
+                    // Assert
+                    expect(microphoneEvent.type).toBe('removed');
+                    expect(microphoneEvent.microphone.id).toBe('microphone1');
+                });
+
+                // Act
+                service.eventHandler.localMicrophone.onRemoved(localMicrophone);
+            });
+
+            it('onSelected raises local microphone event', () => {
+                // Arrenge
+                const service = new VideoClientService();
+                const localMicrophone = { id: 'microphone1' };
+
+                service.getMicrophones().subscribe(microphoneEvent => {
+                    // Assert
+                    expect(microphoneEvent.type).toBe('selected');
+                    expect(microphoneEvent.microphone.id).toBe('microphone1');
+                });
+
+                // Act
+                service.eventHandler.localMicrophone.onSelected(localMicrophone);
+            });
+
+            it('onStateUpdated raises local microphone event', () => {
+                // Arrenge
+                const service = new VideoClientService();
+                const localMicrophone = { id: 'microphone1' };
+
+                service.getMicrophones().subscribe(microphoneEvent => {
+                    // Assert
+                    expect(microphoneEvent.type).toBe('statechanged');
+                    expect(microphoneEvent.microphone.id).toBe('microphone1');
+                });
+
+                // Act
+                service.eventHandler.localMicrophone.onStateUpdated(localMicrophone);
+            });
+        });
+
+        describe('localSpeaker', () => {
+            it('onAdded raises local speaker event', () => {
+                // Arrenge
+                const service = new VideoClientService();
+                const localSpeaker = { id: 'speaker1' };
+
+                service.getSpeakers().subscribe(speakerEvent => {
+                    // Assert
+                    expect(speakerEvent.type).toBe('added');
+                    expect(speakerEvent.speaker.id).toBe('speaker1');
+                });
+
+                // Act
+                service.eventHandler.localSpeaker.onAdded(localSpeaker);
+            });
+
+            it('onRemoved raises local speaker event', () => {
+                // Arrenge
+                const service = new VideoClientService();
+                const localSpeaker = { id: 'speaker1' };
+
+                service.getSpeakers().subscribe(speakerEvent => {
+                    // Assert
+                    expect(speakerEvent.type).toBe('removed');
+                    expect(speakerEvent.speaker.id).toBe('speaker1');
+                });
+
+                // Act
+                service.eventHandler.localSpeaker.onRemoved(localSpeaker);
+            });
+
+            it('onSelected raises local speaker event', () => {
+                // Arrenge
+                const service = new VideoClientService();
+                const localSpeaker = { id: 'speaker1' };
+
+                service.getSpeakers().subscribe(speakerEvent => {
+                    // Assert
+                    expect(speakerEvent.type).toBe('selected');
+                    expect(speakerEvent.speaker.id).toBe('speaker1');
+                });
+
+                // Act
+                service.eventHandler.localSpeaker.onSelected(localSpeaker);
+            });
+
+            it('onStateUpdated raises local speaker event', () => {
+                // Arrenge
+                const service = new VideoClientService();
+                const localSpeaker = { id: 'speaker1' };
+
+                service.getSpeakers().subscribe(speakerEvent => {
+                    // Assert
+                    expect(speakerEvent.type).toBe('statechanged');
+                    expect(speakerEvent.speaker.id).toBe('speaker1');
+                });
+
+                // Act
+                service.eventHandler.localSpeaker.onStateUpdated(localSpeaker);
+            });
+        });
+
+        describe('localWindowShare', () => {
+            it('calls vidyoClient getConnectState method', () => {
+                // Arrenge
+                const service = new VideoClientService();
+                spyOn(service.vidyoClient, 'getConnectState').and.returnValue(Promise.resolve());
+
+                // Act
+                service.eventHandler.localWindowShare.onAdded({});
+
+                // Assert
+                expect(service.vidyoClient.getConnectState).toHaveBeenCalled();
+            });
+
+            it('does not call SelectLocalWindowShare method on vidyoConnector', () => {
+                // Arrenge
+                const service = new VideoClientService();
+                service.vidyoConnector = <any>{ SelectLocalWindowShare: Function };
+
+                spyOn(service.vidyoClient, 'getConnectState').and.returnValue(Promise.resolve({ webrtc: false }));
+                spyOn(service.vidyoConnector, 'SelectLocalWindowShare').and.returnValue(Promise.resolve());
+
+                // Act
+                service.eventHandler.localWindowShare.onAdded({});
+
+                // Assert
+                expect(service.vidyoConnector.SelectLocalWindowShare).not.toHaveBeenCalled();
+            });
+
+            xit('calls SelectLocalWindowShare method on vidyoConnector', () => {
+                // Arrenge
+                const service = new VideoClientService();
+                service.vidyoConnector = <any>{ SelectLocalWindowShare: Function };
+
+                spyOn(service.vidyoClient, 'getConnectState').and.returnValue(Promise.resolve({ webrtc: true }));
+                spyOn(service.vidyoConnector, 'SelectLocalWindowShare').and.returnValue(Promise.resolve());
+
+                // Act
+                service.eventHandler.localWindowShare.onAdded({});
+
+                // Assert
+                expect(service.vidyoConnector.SelectLocalWindowShare).toHaveBeenCalled();
+            });
+
+            it('onAdded raises local window share event', () => {
+                // Arrenge
+                const service = new VideoClientService();
+                const localWindowShare = { id: 'windowshare1' };
+                service.vidyoConnector = <any>{ SelectLocalWindowShare: Function };
+
+                spyOn(service.vidyoClient, 'getConnectState').and.returnValue(Promise.resolve({ webrtc: true }));
+                spyOn(service.vidyoConnector, 'SelectLocalWindowShare').and.returnValue(Promise.resolve());
+
+                service.getWindowShares().subscribe(windowShareEvent => {
+                    // Assert
+                    expect(windowShareEvent.type).toBe('added');
+                    expect(windowShareEvent.windowShare.id).toBe('windowshare1');
+                });
+
+                // Act
+                service.eventHandler.localSpeaker.onAdded(localWindowShare);
+            });
+
+            it('onRemoved raises local window share event', () => {
+                // Arrenge
+                const service = new VideoClientService();
+                const localWindowShare = { id: 'windowshare1' };
+
+                service.getWindowShares().subscribe(windowShareEvent => {
+                    // Assert
+                    expect(windowShareEvent.type).toBe('removed');
+                    expect(windowShareEvent.windowShare.id).toBe('windowshare1');
+                });
+
+                // Act
+                service.eventHandler.localSpeaker.onRemoved(localWindowShare);
+            });
+
+            it('onSelected raises local window share event', () => {
+                // Arrenge
+                const service = new VideoClientService();
+                const localWindowShare = { id: 'windowshare1' };
+
+                service.getWindowShares().subscribe(windowShareEvent => {
+                    // Assert
+                    expect(windowShareEvent.type).toBe('selected');
+                    expect(windowShareEvent.windowShare.id).toBe('windowshare1');
+                });
+
+                // Act
+                service.eventHandler.localSpeaker.onSelected(localWindowShare);
+            });
+
+            it('onStateUpdated raises local window share event', () => {
+                // Arrenge
+                const service = new VideoClientService();
+                const localWindowShare = { id: 'windowshare1' };
+
+                service.getWindowShares().subscribe(windowShareEvent => {
+                    // Assert
+                    expect(windowShareEvent.type).toBe('statechanged');
+                    expect(windowShareEvent.windowShare.id).toBe('windowshare1');
+                });
+
+                // Act
+                service.eventHandler.localSpeaker.onStateUpdated(localWindowShare);
+            });
+        });
+
+        describe('participant', () => {
+            it('onJoined raises participant event', () => {
+                // Arrenge
+                const service = new VideoClientService();
+                const participant = { id: 'participant1' };
+
+                service.getParticipants().subscribe(speakerEvent => {
+                    // Assert
+                    expect(speakerEvent.type).toBe('joined');
+                    expect(speakerEvent.participant.id).toBe('participant1');
+                    expect(speakerEvent.audioOnly).toBeFalsy();
+                });
+
+                // Act
+                service.eventHandler.participant.onJoined(participant);
+            });
+
+            it('onLeft raises participant event', () => {
+                // Arrenge
+                const service = new VideoClientService();
+                const participant = { id: 'participant1' };
+
+                service.getParticipants().subscribe(speakerEvent => {
+                    // Assert
+                    expect(speakerEvent.type).toBe('left');
+                    expect(speakerEvent.participant.id).toBe('participant1');
+                    expect(speakerEvent.audioOnly).toBeFalsy();
+                });
+
+                // Act
+                service.eventHandler.participant.onLeft(participant);
+            });
+
+            it('onDynamicChanged raises participant event', () => {
+                // Arrenge
+                const service = new VideoClientService();
+                const participants = [{ id: 'participant1' }, { id: 'participant2' }];
+                const remoteCameras = [{ id: 'camera1' }];
+
+                service.getParticipants().subscribe(speakerEvent => {
+                    // Assert
+                    expect(speakerEvent.type).toBe('dynamicchanged');
+                    expect(speakerEvent.participant.id).toBe('participant1');
+                    expect(speakerEvent.dynamicParticipants).toBe(<VidyoParticipant[]>participants);
+                    expect(speakerEvent.dynamicRemoteCameras).toBe(<VidyoRemoteCamera[]>remoteCameras);
+                });
+
+                // Act
+                service.eventHandler.participant.onDynamicChanged(participants, remoteCameras);
+            });
+
+            it('onLoudestChanged raises participant event', () => {
+                // Arrenge
+                const service = new VideoClientService();
+                const participant = { id: 'participant1' };
+
+                service.getParticipants().subscribe(speakerEvent => {
+                    // Assert
+                    expect(speakerEvent.type).toBe('loudestchanged');
+                    expect(speakerEvent.participant.id).toBe('participant1');
+                    expect(speakerEvent.audioOnly).toBeTruthy();
+                });
+
+                // Act
+                service.eventHandler.participant.onLoudestChanged(participant, true);
             });
         });
     });
